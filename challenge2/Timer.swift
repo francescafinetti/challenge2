@@ -5,7 +5,8 @@ struct ContentView2: View {
     @State private var timer: Timer? = nil
     @State private var countdownTimer: Timer? = nil
     @State private var countdown: Int = 3
-    @State private var selectedTimeText: String = "10"
+    @State private var selectedMinutesText: String = "0"
+    @State private var selectedSecondsText: String = "10"
     @State private var selectedTime: CGFloat = 10.0
     @State private var isPaused = false
     @State private var isCountingDown = false
@@ -13,10 +14,6 @@ struct ContentView2: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("Timer")
-                .font(.title)
-                .padding()
-            
             ZStack {
                 Circle()
                     .stroke(Color.gray.opacity(0.3), lineWidth: 40)
@@ -30,13 +27,11 @@ struct ContentView2: View {
                     .animation(.linear, value: progress)
                 
                 if isCountingDown {
-                    // Mostra il countdown 3-2-1 in grande
                     Text("\(countdown)")
                         .font(.system(size: 100, weight: .bold))
                         .foregroundColor(.blue)
                 } else {
-                    // Mostra il tempo rimanente del timer
-                    Text("\(Int((1 - progress) * selectedTime))s")
+                    Text(timeFormatted(totalSeconds: Int((1 - progress) * selectedTime)))
                         .font(.largeTitle)
                         .bold()
                 }
@@ -44,20 +39,30 @@ struct ContentView2: View {
             .padding()
             
             VStack {
-                Text("Select the duration (in seconds)")
+                Text("Set the duration")
                     .font(.headline)
                 
-                TextField("set duration", text: $selectedTimeText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .keyboardType(.numberPad)
-                    .frame(width: 100)
-                    .multilineTextAlignment(.center)
-                    .padding()
+                HStack {
+                    TextField("Minutes", text: $selectedMinutesText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.numberPad)
+                        .frame(width: 60)
+                        .multilineTextAlignment(.center)
+                    
+                    Text(":")
+                    
+                    TextField("Seconds", text: $selectedSecondsText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.numberPad)
+                        .frame(width: 60)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
             }
 
             HStack {
                 Button(action: startCountdown) {
-                    Text("Avvia")
+                    Text("Start")
                         .font(.title2)
                         .padding()
                         .background(Color.blue)
@@ -66,10 +71,10 @@ struct ContentView2: View {
                 }
                 
                 Button(action: togglePause) {
-                    Text(isPaused ? "Riprendi" : "Pausa")
+                    Text(isPaused ? "Continue" : "Pause")
                         .font(.title2)
                         .padding()
-                        .background(Color.orange)
+                        .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
@@ -82,13 +87,11 @@ struct ContentView2: View {
     }
 
     func startCountdown() {
-       
-        if let timeInt = Int(selectedTimeText), timeInt > 0, CGFloat(timeInt) <= maxTime {
-            selectedTime = CGFloat(timeInt)
+        if let minutes = Int(selectedMinutesText), let seconds = Int(selectedSecondsText), minutes >= 0, seconds >= 0, CGFloat(minutes * 60 + seconds) <= maxTime {
+            selectedTime = CGFloat(minutes * 60 + seconds)
         } else {
             selectedTime = 10.0
         }
-        
         
         countdown = 3
         isCountingDown = true
@@ -122,6 +125,12 @@ struct ContentView2: View {
         if !isCountingDown {
             isPaused.toggle()
         }
+    }
+    
+    func timeFormatted(totalSeconds: Int) -> String {
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 
