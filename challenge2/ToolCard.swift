@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  challenge2
-//
-//  Created by Francesca Finetti on 04/11/24.
-//
-
 import SwiftUI
 
 struct ToolCard: View {
@@ -13,7 +6,7 @@ struct ToolCard: View {
     var subtitle: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .center, spacing: 5) { // Center align VStack
             Image(systemName: iconName)
                 .font(.system(size: 100))
                 .foregroundColor(Color.blue)
@@ -27,7 +20,8 @@ struct ToolCard: View {
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .leading) 
+                .multilineTextAlignment(.center) // Center text in multiple lines
+                .frame(maxWidth: .infinity, alignment: .center) // Center align subtitle
         }
         .frame(width: 135, height: 260)
         .padding()
@@ -37,3 +31,6 @@ struct ToolCard: View {
     }
 }
 
+#Preview {
+    ContentView()
+}

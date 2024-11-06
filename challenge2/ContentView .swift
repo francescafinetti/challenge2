@@ -6,10 +6,10 @@ struct ContentView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                        ToolCard(iconName: "timer", title: "Timer", subtitle: "Set a Timer!")
-                        ToolCard(iconName: "bag.fill", title: "Random Token", subtitle: "Create a bag filled with random tokens!")
+                        ToolCard(iconName: "timer", title: "Timer", subtitle: "Set a Timer! (Seconds)")
+                        ToolCard(iconName: "bag.fill", title: "Random Token", subtitle: "random token bag filled picker")
                         ToolCard(iconName: "dice.fill", title: "Dice Roller", subtitle: "Roll one of multiple dices!")
-                        ToolCard(iconName: "line.3.crossed.swirl.circle", title: "Spin the Wheel", subtitle: "-")
+                        ToolCard(iconName: "line.3.crossed.swirl.circle", title: "Spin the Wheel", subtitle: "Lore Ipsum Text Generator")
                     }
                     .padding(.horizontal)
                 }
