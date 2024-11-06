@@ -17,17 +17,17 @@ struct ToolCard: View {
             Image(systemName: iconName)
                 .font(.system(size: 100))
                 .foregroundColor(Color.blue)
-                .frame(maxWidth: .infinity, alignment: .center) // Allinea l'icona a sinistra
+                .frame(maxWidth: .infinity, alignment: .center)
             
             Text(title)
                 .font(.headline)
                 .foregroundColor(.black)
-                .frame(maxWidth: .infinity, alignment: .center) // Allinea il testo del titolo a sinistra
+                .frame(maxWidth: .infinity, alignment: .center)
             
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, alignment: .leading) // Allinea il sottotitolo a sinistra
+                .frame(maxWidth: .infinity, alignment: .leading) 
         }
         .frame(width: 135, height: 260)
         .padding()

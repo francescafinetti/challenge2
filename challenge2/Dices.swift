@@ -7,7 +7,7 @@ struct Dices: View {
 
     var body: some View {
         VStack {
-            Text("Lancia i Dadi")
+            Text("Roll the Dices")
                 .font(.largeTitle)
             DiceView(isRolling: $isRolling, diceCount: $diceCount)
                 .frame(width: 500, height: 500)
@@ -30,7 +30,7 @@ struct Dices: View {
                         isRolling = false
                     }
                 }) {
-                    Text("Lancia")
+                    Text("Roll")
                         .font(.title)
                         .padding()
                         .background(Color.blue)
@@ -91,21 +91,18 @@ struct DiceView: UIViewRepresentable {
     private func createDiceScene() -> SCNScene {
         let scene = SCNScene()
         
-        // Primo dado
+       
         let diceNode1 = createDiceNode(name: "diceNode1")
         scene.rootNode.addChildNode(diceNode1)
         
-        // Secondo dado nascosto inizialmente
         let diceNode2 = createDiceNode(name: "diceNode2")
         diceNode2.isHidden = true
         scene.rootNode.addChildNode(diceNode2)
         
-        // Terzo dado nascosto inizialmente
         let diceNode3 = createDiceNode(name: "diceNode3")
         diceNode3.isHidden = true
         scene.rootNode.addChildNode(diceNode3)
         
-        // Aggiunge la luce
         let light = SCNLight()
         light.type = .omni
         let lightNode = SCNNode()
@@ -113,7 +110,6 @@ struct DiceView: UIViewRepresentable {
         lightNode.position = SCNVector3(5, 5, 5)
         scene.rootNode.addChildNode(lightNode)
         
-        // Aggiunge la camera
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         cameraNode.position = SCNVector3(0, 0, 5)

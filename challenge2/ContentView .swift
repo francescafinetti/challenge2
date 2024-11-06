@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct tools1: View {
+struct ContentView: View {
     var body: some View {
         NavigationView {
             ScrollView {
@@ -22,5 +22,5 @@ struct tools1: View {
 }
 
 #Preview {
-    tools1()
+    ContentView()
 }

@@ -4,7 +4,7 @@ struct ContentView2: View {
     @State private var progress: CGFloat = 0.0
     @State private var timer: Timer? = nil
     @State private var countdownTimer: Timer? = nil
-    @State private var countdown: Int = 3 // Per il conto alla rovescia
+    @State private var countdown: Int = 3
     @State private var selectedTimeText: String = "10"
     @State private var selectedTime: CGFloat = 10.0
     @State private var isPaused = false
@@ -44,10 +44,10 @@ struct ContentView2: View {
             .padding()
             
             VStack {
-                Text("Durata del Timer (in secondi):")
+                Text("Select the duration (in seconds)")
                     .font(.headline)
                 
-                TextField("Inserisci durata", text: $selectedTimeText)
+                TextField("set duration", text: $selectedTimeText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.numberPad)
                     .frame(width: 100)
@@ -82,28 +82,27 @@ struct ContentView2: View {
     }
 
     func startCountdown() {
-        // Convalida e converte il testo inserito in un valore numerico
+       
         if let timeInt = Int(selectedTimeText), timeInt > 0, CGFloat(timeInt) <= maxTime {
             selectedTime = CGFloat(timeInt)
         } else {
             selectedTime = 10.0
         }
         
-        // Imposta il conto alla rovescia a 3 e attiva la modalità di countdown
+        
         countdown = 3
         isCountingDown = true
         isPaused = false
         progress = 0.0
         countdownTimer?.invalidate()
         
-        // Avvia il timer per il conto alla rovescia
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             if countdown > 1 {
                 countdown -= 1
             } else {
                 countdownTimer?.invalidate()
                 isCountingDown = false
-                startTimer() // Avvia il timer principale dopo il conto alla rovescia
+                startTimer()
             }
         }
     }
@@ -120,7 +119,7 @@ struct ContentView2: View {
     }
 
     func togglePause() {
-        if !isCountingDown { // Permette di mettere in pausa solo quando il timer è in esecuzione
+        if !isCountingDown {
             isPaused.toggle()
         }
     }
