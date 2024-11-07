@@ -10,7 +10,7 @@ struct RuotaDellaFortunaView: View {
         VStack {
             // Input per aggiungere un giocatore
             HStack {
-                TextField("Nome giocatore", text: $newPlayerName)
+                TextField("Player name", text: $newPlayerName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 Button(action: addPlayer) {
                     Text("Aggiungi")
