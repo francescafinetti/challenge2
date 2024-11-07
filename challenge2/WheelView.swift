@@ -95,7 +95,7 @@ struct RuotaDellaFortunaView: View {
 
             // Mostra il giocatore selezionato
             if let selectedPlayer = selectedPlayer {
-                Text("Giocatore selezionato: \(selectedPlayer)")
+                Text("Selected player: \(selectedPlayer)")
                     .font(.headline)
                     .padding()
             }
