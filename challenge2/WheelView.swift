@@ -8,6 +8,7 @@ struct RuotaDellaFortunaView: View {
 
     var body: some View {
         VStack {
+            // Input per aggiungere un giocatore
             HStack {
                 TextField("Nome giocatore", text: $newPlayerName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -18,13 +19,19 @@ struct RuotaDellaFortunaView: View {
             }
             .padding()
             
-            List(playerNames, id: \.self) { name in
-                Text(name)
+            // Lista dei giocatori con possibilità di eliminare tramite swipe
+            List {
+                ForEach(playerNames, id: \.self) { name in
+                    Text(name)
+                }
+                .onDelete(perform: deletePlayer)
             }
             
+            // Disegno della ruota della fortuna
             ZStack {
                 Circle()
-                    .fill(Color.gray.opacity(0.2))
+                    .fill(Color.red)
+                    .saturation(0.7)
                 
                 ForEach(0..<playerNames.count, id: \.self) { index in
                     let startAngle = Angle(degrees: Double(index) * 360.0 / Double(playerNames.count))
@@ -40,11 +47,13 @@ struct RuotaDellaFortunaView: View {
                             clockwise: false
                         )
                     }
-                    .fill(Color(hue: Double(index) / Double(playerNames.count), saturation: 0.7, brightness: 0.9))
+                    .fill(Color(hue: Double(index) / Double(playerNames.count), saturation: 0.7, brightness: 0.9)) // Colori pastello
                     .overlay(
                         Text(playerNames[index])
                             .font(.caption)
-                            .foregroundColor(.white)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(5)
+                            .foregroundColor(.black)
                             .rotationEffect(startAngle + Angle(degrees: 180 / Double(playerNames.count)))
                             .position(
                                 x: 150 + cos((startAngle.radians + endAngle.radians) / 2) * 100,
@@ -52,16 +61,33 @@ struct RuotaDellaFortunaView: View {
                             )
                     )
                 }
+                Image(systemName: "star.circle")
+                    .font(.system(size:30))
+                    .foregroundColor(.yellow)
             }
             .frame(width: 300, height: 300)
             .rotationEffect(Angle(degrees: rotationAngle))
             
+            Image(systemName: "triangle")
+            
+            // Bottone per far girare la ruota
             Button(action: spinWheel) {
                 Text("Spin")
                     .font(.title)
                     .bold()
                     .padding()
                     .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .padding()
+
+            // Bottone per resettare la lista dei giocatori e la ruota
+            Button(action: resetGame) {
+                Text("Reset")
+                    .font(.title2)
+                    .padding()
+                    .background(Color.red)
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
@@ -82,6 +108,18 @@ struct RuotaDellaFortunaView: View {
             playerNames.append(newPlayerName)
             newPlayerName = ""
         }
+    }
+    
+    // Funzione per eliminare un giocatore
+    private func deletePlayer(at offsets: IndexSet) {
+        playerNames.remove(atOffsets: offsets)
+    }
+    
+    // Funzione per resettare la ruota e i giocatori
+    private func resetGame() {
+        playerNames.removeAll()
+        selectedPlayer = nil
+        rotationAngle = 0
     }
     
     // Funzione per far girare la ruota
