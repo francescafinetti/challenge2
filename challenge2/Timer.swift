@@ -46,7 +46,6 @@ struct TimerView: View {
                 
                 HStack {
                     TextField("Minutes", text: $selectedMinutesText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .keyboardType(.numberPad)
                         .frame(width: 60)
                         .multilineTextAlignment(.center)
@@ -54,7 +53,6 @@ struct TimerView: View {
                     Text(":")
                     
                     TextField("Seconds", text: $selectedSecondsText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .keyboardType(.numberPad)
                         .frame(width: 60)
                         .multilineTextAlignment(.center)

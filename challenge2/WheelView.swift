@@ -1,42 +1,37 @@
 import SwiftUI
 
 struct RuotaDellaFortunaView: View {
-    @State private var playerNames: [String] = [] // Lista dei nomi dei giocatori
-    @State private var newPlayerName: String = "" // Nome del nuovo giocatore
-    @State private var selectedPlayer: String? = nil // Nome del giocatore selezionato
-    @State private var rotationAngle: Double = 0 // Angolo di rotazione
+    @State private var playerNames: [String] = []
+    @State private var newPlayerName: String = ""
+    @State private var selectedPlayer: String? = nil
+    @State private var rotationAngle: Double = 0
 
     var body: some View {
         VStack {
-            // Sezione per aggiungere giocatori
             HStack {
                 TextField("Nome giocatore", text: $newPlayerName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 Button(action: addPlayer) {
                     Text("Aggiungi")
                 }
-                .disabled(playerNames.count >= 10 || newPlayerName.isEmpty) // Limita a 10 giocatori
+                .disabled(playerNames.count >= 10 || newPlayerName.isEmpty)
             }
             .padding()
             
-            // Mostra i giocatori inseriti
             List(playerNames, id: \.self) { name in
                 Text(name)
             }
             
-            // Ruota della fortuna
             ZStack {
                 Circle()
                     .fill(Color.gray.opacity(0.2))
                 
                 ForEach(0..<playerNames.count, id: \.self) { index in
-                    // Calcola l'angolo per ogni spicchio
                     let startAngle = Angle(degrees: Double(index) * 360.0 / Double(playerNames.count))
                     let endAngle = Angle(degrees: Double(index + 1) * 360.0 / Double(playerNames.count))
                     
-                    // Spicchio della ruota con il nome del giocatore
                     Path { path in
-                        path.move(to: CGPoint(x: 150, y: 150)) // Centro del cerchio
+                        path.move(to: CGPoint(x: 150, y: 150))
                         path.addArc(
                             center: CGPoint(x: 150, y: 150),
                             radius: 150,
@@ -48,15 +43,30 @@ struct RuotaDellaFortunaView: View {
                     .fill(Color(hue: Double(index) / Double(playerNames.count), saturation: 0.7, brightness: 0.9))
                     .overlay(
                         Text(playerNames[index])
-                            .rotationEffect(Angle(degrees: 90 + (Double(index) * 360.0 / Double(playerNames.count))))
-                            .position(x: 150, y: 50)
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .rotationEffect(startAngle + Angle(degrees: 180 / Double(playerNames.count)))
+                            .position(
+                                x: 150 + cos((startAngle.radians + endAngle.radians) / 2) * 100,
+                                y: 150 + sin((startAngle.radians + endAngle.radians) / 2) * 100
+                            )
                     )
                 }
             }
             .frame(width: 300, height: 300)
             .rotationEffect(Angle(degrees: rotationAngle))
-            .onTapGesture(perform: spinWheel) // Fa girare la ruota quando viene toccata
             
+            Button(action: spinWheel) {
+                Text("Spin")
+                    .font(.title)
+                    .bold()
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .padding()
+
             // Mostra il giocatore selezionato
             if let selectedPlayer = selectedPlayer {
                 Text("Giocatore selezionato: \(selectedPlayer)")
