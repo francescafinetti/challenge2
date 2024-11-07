@@ -8,14 +8,17 @@ struct ContainerView: View {
             TabView {
                 ContentView()
                     .tabItem {
-                        Image(systemName: "party.popper")
-                        Text("Tools")
+                        Label("Tools", systemImage: "party.popper")
+                    }
+                
+                RecentGamesView()
+                    .tabItem {
+                        Label("Games History", systemImage: "clock")
                     }
             }
         }
     }
 }
-
 struct ContainerView_Previews: PreviewProvider {
     static var previews: some View {
         ContainerView()

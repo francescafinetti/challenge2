@@ -16,8 +16,13 @@ struct RankingView_: View {
     
     var body: some View {
         ZStack {
-            Color(.systemGray6).ignoresSafeArea()
-            
+            LinearGradient(
+                gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+
             VStack {
                 Text("Player Rankings")
                     .font(.largeTitle)
