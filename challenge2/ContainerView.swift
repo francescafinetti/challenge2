@@ -10,13 +10,11 @@ struct ContainerView: View {
                     .tabItem {
                         Label("Tools", systemImage: "party.popper")
                     }
-                    .environment(\.symbolVariants, .fill) // Makes active tab icon filled
                 
                 RecentGamesView()
                     .tabItem {
-                        Label("Recent Games", systemImage: "clock")
+                        Label("Games History", systemImage: "clock")
                     }
-                    .environment(\.symbolVariants, .fill) // Makes active tab icon filled
             }
         }
     }

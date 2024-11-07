@@ -6,6 +6,7 @@ struct Dices: View {
     @State private var diceCount = 1
 
     var body: some View {
+        
         VStack {
             Text("Roll the Dices")
                 .font(.largeTitle)
