@@ -8,14 +8,19 @@ struct ContainerView: View {
             TabView {
                 ContentView()
                     .tabItem {
-                        Image(systemName: "party.popper")
-                        Text("Tools")
+                        Label("Tools", systemImage: "party.popper")
                     }
+                    .environment(\.symbolVariants, .fill) // Makes active tab icon filled
+                
+                RecentGamesView()
+                    .tabItem {
+                        Label("Recent Games", systemImage: "clock")
+                    }
+                    .environment(\.symbolVariants, .fill) // Makes active tab icon filled
             }
         }
     }
 }
-
 struct ContainerView_Previews: PreviewProvider {
     static var previews: some View {
         ContainerView()
