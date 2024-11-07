@@ -8,7 +8,7 @@ struct ContainerView: View {
             TabView {
                 ContentView()
                     .tabItem {
-                        Image(systemName: "circle")
+                        Image(systemName: "party.popper")
                         Text("Tools")
                     }
             }
