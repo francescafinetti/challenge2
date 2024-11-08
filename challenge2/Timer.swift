@@ -15,11 +15,6 @@ struct TimerView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-//            Text("Timer")
-//                .font(.title)
-//                .fontWeight(.bold)
-//                .padding(.top, -50)
-//
             ZStack {
                 Circle()
                     .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
@@ -43,26 +38,30 @@ struct TimerView: View {
                         .bold()
                 }
             }
-            .padding(100)
+            .padding(.top, -50)
+            .padding(50)
             
             VStack {
                 Text("Set the duration")
                     .font(.headline)
                 
-                HStack {
+                HStack(spacing: 2) { // Reduced spacing here
                     TextField("Minutes", text: $selectedMinutesText)
                         .keyboardType(.numberPad)
-                        .frame(width: 60)
+                        .frame(width: 40) // Adjust width if needed
                         .multilineTextAlignment(.center)
+                        .padding(.trailing, -5) // Tighten spacing with colon
                     
                     Text(":")
+                        .padding(.horizontal, -5) // Further reduces space around colon
                     
                     TextField("Seconds", text: $selectedSecondsText)
                         .keyboardType(.numberPad)
-                        .frame(width: 60)
+                        .frame(width: 40) // Adjust width if needed
                         .multilineTextAlignment(.center)
+                        .padding(.leading, -5) // Tighten spacing with colon
                 }
-                .padding(15)
+                .padding(.horizontal, 10) // Adjusts padding around whole HStack if needed
             }
 
             HStack {
@@ -94,12 +93,13 @@ struct TimerView: View {
                     }.offset(x: 20, y: 0)
                 }
             }
-
         }
         .onDisappear {
             timer?.invalidate()
             countdownTimer?.invalidate()
         }
+        .navigationTitle("Timer")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     func startCountdown() {
@@ -168,6 +168,8 @@ struct TimerView: View {
 
 struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
-        TimerView()
+        NavigationView {
+            TimerView()
+        }
     }
 }
