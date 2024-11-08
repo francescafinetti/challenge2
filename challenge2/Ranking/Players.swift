@@ -59,7 +59,7 @@ struct playerEntry: View {
                     newPoints = "\(player.playerpoints)"
                     showAlert = true
                 }) {
-                    Image(systemName: "pencil.circle")
+                    Image(systemName: "pencil")
                         .foregroundColor(.blue)
                         .font(.system(size: 24))
                 }
