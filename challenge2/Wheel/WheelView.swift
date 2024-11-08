@@ -1,82 +1,30 @@
 import SwiftUI
 
 struct Wheel: View {
-    @State private var playerNames: [String] = []
-    @State private var newPlayerName: String = ""
+    @State private var players: [Player2] = []
     @State private var selectedPlayer: String? = nil
     @State private var rotationAngle: Double = 0
     @State private var showAlert = false
-    private let sliceColors: [Color] = [
-        .blue, .red, .green, .yellow, .cyan, .purple, .orange, .pink, .teal, .indigo
-    ]
+    @State private var showAddPlayerModal = false
+    @State private var showPlayerListModal = false
     
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.4), Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
-                    HStack {
-                        TextField("Player Name", text: $newPlayerName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal)
-                        
-                        Button(action: addPlayer) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.blue)
-                                    .frame(width: 80, height: 32)
-                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                                
-                                Text("Add")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        .disabled(playerNames.count >= 10 || newPlayerName.isEmpty)
-                    }
-                    .padding(.top, 35)
-                    ScrollView {
-                        VStack(spacing: 5) {
-                            ForEach(playerNames, id: \.self) { name in
-                                HStack {
-                                    Text(name)
-                                        .font(.body)
-                                        .foregroundColor(.black)
-                                        .padding(.leading)
-                                    
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        deletePlayer(name)
-                                    }) {
-                                        Image(systemName: "trash")
-                                            .foregroundColor(.red)
-                                            .padding()
-                                    }
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 40)
-                                .padding(.vertical, 5)
-                                .background(Color.white.opacity(0.9))
-                                .cornerRadius(10)
-                                .shadow(radius: 2)
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .frame(height: 150)
-                    
+                    // Ruota dei giocatori
                     ZStack {
                         Circle()
                             .fill(Color.blue.opacity(0.2))
                             .frame(width: 300, height: 300)
                             .overlay(Circle().stroke(Color.white, lineWidth: 5))
                         
-                        ForEach(0..<playerNames.count, id: \.self) { index in
-                            let startAngle = Angle(degrees: Double(index) * 360.0 / Double(playerNames.count))
-                            let endAngle = Angle(degrees: Double(index + 1) * 360.0 / Double(playerNames.count))
+                        ForEach(0..<players.count, id: \.self) { index in
+                            let startAngle = Angle(degrees: Double(index) * 360.0 / Double(players.count))
+                            let endAngle = Angle(degrees: Double(index + 1) * 360.0 / Double(players.count))
                             
                             Path { path in
                                 path.move(to: CGPoint(x: 150, y: 150))
@@ -88,77 +36,77 @@ struct Wheel: View {
                                     clockwise: false
                                 )
                             }
-                            .fill(sliceColors[index % sliceColors.count])
+                            .fill(players[index].color)
                             .overlay(
-                                Text(playerNames[index])
+                                Text(players[index].name)
                                     .font(.caption)
                                     .foregroundColor(.white)
-                                    .rotationEffect(startAngle + Angle(degrees: 180 / Double(playerNames.count)))
+                                    .rotationEffect(startAngle + Angle(degrees: 180 / Double(players.count)))
                                     .position(
                                         x: 150 + cos((startAngle.radians + endAngle.radians) / 2) * 100,
                                         y: 150 + sin((startAngle.radians + endAngle.radians) / 2) * 100
                                     )
-                            )
-                            .overlay(
-                                Path { path in
-                                    path.move(to: CGPoint(x: 150, y: 150))
-                                    path.addArc(
-                                        center: CGPoint(x: 150, y: 150),
-                                        radius: 150,
-                                        startAngle: startAngle,
-                                        endAngle: endAngle,
-                                        clockwise: false
-                                    )
-                                }
-                                    .stroke(Color.white, lineWidth: 1)
                             )
                         }
                     }
                     .frame(width: 300, height: 300)
                     .rotationEffect(Angle(degrees: rotationAngle))
                     
+                    // Freccia che indica il giocatore selezionato
                     Image(systemName: "triangle.fill")
                         .font(.system(size: 30))
                         .foregroundColor(.red)
                         .offset(y: -20)
                     
-                    HStack {
-                        Button(action: spinWheel) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.white)
-                                    .frame(width: 120, height: 50)
-                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                                
-                                Text("Spin")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundColor(.black)
-                            }
+                    // Pulsante per girare la ruota
+                    Button(action: spinWheel) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.white)
+                                .frame(width: 120, height: 50)
+                                .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                            
+                            Text("Spin")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.black)
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 80)
-                        
-                        Button(action: resetGame) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.white)
-                                    .frame(width: 120, height: 50)
-                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                                
-                                Text("Reset")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundColor(.red)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.bottom, 80)
                     }
-                    
-                    Spacer()
+                    .padding(.bottom, 20)
                 }
-                .padding()
+            }
+            .navigationTitle("Spin the Wheel")
+            .toolbar {
+                // Pulsante per aprire la lista dei giocatori
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        showPlayerListModal = true
+                    }) {
+                        Image(systemName: "list.bullet")
+                    }
+                }
+                
+                // Pulsante "Reset"
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: resetGame) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
+                
+                // Pulsante per aggiungere nuovi giocatori
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showAddPlayerModal = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showAddPlayerModal) {
+                NewPlayerView(showModal: $showAddPlayerModal, players: $players)
+            }
+            .sheet(isPresented: $showPlayerListModal) {
+                PlayerListView(showModal: $showPlayerListModal, players: $players)
             }
             .alert(isPresented: $showAlert) {
                 Alert(
@@ -168,28 +116,16 @@ struct Wheel: View {
                 )
             }
         }
-        .navigationTitle("Spin the Wheel")
     }
     
-    
-    
-    
-    
-    
-    private func addPlayer() {
-        if !newPlayerName.isEmpty && playerNames.count < 10 {
-            playerNames.append(newPlayerName)
-            newPlayerName = ""
-        }
-    }
-    private func deletePlayer(_ name: String) {
-        playerNames.removeAll { $0 == name }
-    }
+    // Funzione per resettare il gioco
     private func resetGame() {
-        playerNames.removeAll()
+        players.removeAll()
         selectedPlayer = nil
         rotationAngle = 0
     }
+    
+    // Funzione per girare la ruota
     private func spinWheel() {
         let randomRotation = Double.random(in: 720...1440)
         withAnimation(.easeOut(duration: 3)) {
@@ -197,18 +133,21 @@ struct Wheel: View {
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            let selectedIndex = Int((rotationAngle.truncatingRemainder(dividingBy: 360)) / (360 / Double(playerNames.count)))
-            selectedPlayer = playerNames[(playerNames.count - selectedIndex) % playerNames.count]
+            if players.isEmpty { return }
+            
+            // Calcolo del giocatore selezionato
+            let sliceAngle = 360.0 / Double(players.count)
+            let normalizedAngle = (rotationAngle.truncatingRemainder(dividingBy: 360) + 360).truncatingRemainder(dividingBy: 360)
+            let selectedIndex = Int((270.0 - normalizedAngle + 360).truncatingRemainder(dividingBy: 360) / sliceAngle)
+            
+            selectedPlayer = players[selectedIndex % players.count].name
             showAlert = true
         }
     }
 }
-
-
 
 struct Wheel_Previews: PreviewProvider {
     static var previews: some View {
         Wheel()
     }
 }
-

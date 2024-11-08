@@ -6,14 +6,13 @@ struct Player: Identifiable {
     var image: UIImage?
     var testo: String
     var playerpoints: Int
-    var rank: Int
     var playerBadge: String
 }
 
 struct RankingView_: View {
     @State private var players: [Player] = []
-    @State private var showingCustomAlert = false
-
+    @State private var showingAddPlayerModal = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -23,49 +22,20 @@ struct RankingView_: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-
+                
                 VStack {
-                    Text("Player Rankings")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top, 20)
-                    
                     if players.isEmpty {
                         Spacer()
-                        
-                        VStack {
-                            Text("No players yet!")
-                                .font(.title)
-                                .foregroundColor(.gray)
-                                .padding(.bottom, 10)
-                            
-                            Button(action: {
-                                showingCustomAlert = true
-                            }) {
-                                HStack {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 24))
-                                    Text("Add Player")
-                                        .font(.headline)
-                                }
-                                .foregroundColor(.blue)
-                                .padding()
-                                .background(Color.white)
-                                .cornerRadius(10)
-                                .shadow(radius: 5)
-                            }
-                        }
-                        
+                        Text("Nothing yet here!")
+                            .font(.title)
+                            .foregroundColor(.gray)
                         Spacer()
-                        
                     } else {
                         List {
                             ForEach(players.indices, id: \.self) { index in
-                                playerEntry(player: $players[index], position: index + 1) {
-                                    sortPlayers()
-                                }
-                                .listRowBackground(Color.clear)
-                                .padding(.vertical, 4)
+                                playerEntry(player: $players[index], players: $players)
+                                    .listRowBackground(Color.clear)
+                                    .padding(.vertical, 4)
                             }
                             .onDelete(perform: deletePlayer)
                         }
@@ -74,125 +44,186 @@ struct RankingView_: View {
                         .padding()
                     }
                 }
-                
-                if showingCustomAlert {
-                    CustomAlertView(players: $players, showingAlert: $showingCustomAlert, sortPlayers: sortPlayers)
-                }
             }
             .navigationTitle("Rankings")
             .toolbar {
-                // Pulsante per resettare la lista dei giocatori
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: resetGame) {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                }
-                
-                // Pulsante per aggiungere nuovi giocatori
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        showingCustomAlert = true
+                        showingAddPlayerModal = true
                     }) {
                         Image(systemName: "plus")
                     }
                 }
             }
+            .sheet(isPresented: $showingAddPlayerModal) {
+                AddPlayerView(players: $players)
+            }
         }
     }
     
-    // Funzione per ordinare i giocatori per punteggio
-    private func sortPlayers() {
-        players.sort { $0.playerpoints > $1.playerpoints }
-    }
-    
-    // Funzione per resettare la lista dei giocatori
-    private func resetGame() {
-        players.removeAll()
-    }
-    
-    // Funzione per eliminare un giocatore dalla lista
     private func deletePlayer(at offsets: IndexSet) {
         players.remove(atOffsets: offsets)
         sortPlayers()
     }
+    
+    private func sortPlayers() {
+        players.sort { $0.playerpoints > $1.playerpoints }
+    }
+    
+    
 }
-
-struct CustomAlertView: View {
+struct playerEntry: View {
+    @Binding var player: Player
     @Binding var players: [Player]
-    @Binding var showingAlert: Bool
-    var sortPlayers: () -> Void
+    
+    @State private var showAlert = false
+    @State private var newPoints = ""
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                .frame(width: 350, height: 130)
+            
+            HStack {
+                if let image = player.image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                } else {
+                    Image(systemName: "person.crop.circle.fill")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                        .foregroundColor(.gray)
+                }
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(player.testo)
+                        .font(.headline)
+                    
+                    HStack {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                        Text("\(player.playerpoints) pts")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    newPoints = "\(player.playerpoints)"
+                    showAlert = true
+                }) {
+                    Image(systemName: "pencil.circle")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 24))
+                }
+                .alert("Actual Score", isPresented: $showAlert) {
+                    TextField("New Score", text: $newPoints)
+                        .keyboardType(.numberPad)
+                    
+                    Button("Save", action: savePoints)
+                    Button("Back", role: .cancel) { }
+                }
+                
+                let position = players.firstIndex(where: { $0.id == player.id })! + 1
+                if position == 1 {
+                    Image(systemName: "rosette")
+                        .foregroundColor(.yellow)
+                        .font(.system(size: 24))
+                } else if position == 2 {
+                    Image(systemName: "rosette")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 24))
+                } else if position == 3 {
+                    Image(systemName: "rosette")
+                        .foregroundColor(.brown)
+                        .font(.system(size: 24))
+                }
+            }
+            .padding(.horizontal, 8)
+        }
+    }
+    
+    private func savePoints() {
+        if let updatedPoints = Int(newPoints) {
+            player.playerpoints = updatedPoints
+            players.sort { $0.playerpoints > $1.playerpoints }
+        }
+    }
+}
+struct AddPlayerView: View {
+    @Binding var players: [Player]
+    @Environment(\.dismiss) var dismiss
     @State private var playerName = ""
     @State private var playerPoints = 0
     @State private var selectedImage: UIImage?
     @State private var showingImagePicker = false
     
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.4).ignoresSafeArea()
-            
-            VStack(spacing: 20) {
-                Text("Add New Player")
-                    .font(.headline)
-                
-                TextField("Player Name", text: $playerName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
-                
-                TextField("Starting Points", value: $playerPoints, format: .number)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding(.horizontal)
-                    .keyboardType(.numberPad)
-                
-                Button(action: {
-                    showingImagePicker = true
-                }) {
-                    HStack {
-                        if let selectedImage = selectedImage {
-                            Image(uiImage: selectedImage)
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .clipShape(Circle())
-                                .shadow(radius: 5)
-                        } else {
-                            Image(systemName: "person.crop.circle.fill.badge.plus")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.blue)
-                        }
-                        Text("Select Image")
-                    }
-                }
-                
-                HStack {
-                    Button("Cancel") {
-                        showingAlert = false
-                    }
-                    .padding()
-                    .background(Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+        NavigationStack {
+            Form {
+                Section(header: Text("Player Details")) {
+                    TextField("Enter Player Name", text: $playerName)
                     
-                    Button("Add Player") {
-                        let newPlayer = Player(image: selectedImage, testo: playerName, playerpoints: playerPoints, rank: players.count + 1, playerBadge: "badge")
-                        players.append(newPlayer)
-                        showingAlert = false
-                        sortPlayers()
+                    TextField("Starting Points", value: $playerPoints, format: .number)
+                        .keyboardType(.numberPad)
+                    
+                    Button(action: {
+                        showingImagePicker = true
+                    }) {
+                        HStack {
+                            if let selectedImage = selectedImage {
+                                Image(uiImage: selectedImage)
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            } else {
+                                Image(systemName: "person.crop.circle.fill.badge.plus")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundColor(.blue)
+                            }
+                            Text("Select Image")
+                        }
                     }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
                 }
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(15)
-            .shadow(radius: 20)
-            .frame(maxWidth: 300)
+            .navigationTitle("Add New Player")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Add") {
+                        addPlayer()
+                        dismiss()
+                    }
+                    .disabled(playerName.isEmpty)
+                }
+            }
             .sheet(isPresented: $showingImagePicker) {
                 ImagePicker(selectedImage: $selectedImage)
             }
         }
+    }
+    
+    private func addPlayer() {
+        let newPlayer = Player(image: selectedImage, testo: playerName, playerpoints: playerPoints, playerBadge: "badge")
+        players.append(newPlayer)
+        players.sort { $0.playerpoints > $1.playerpoints }
     }
 }
 
