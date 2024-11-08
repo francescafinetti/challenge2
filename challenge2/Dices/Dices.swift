@@ -7,7 +7,7 @@ struct Dices: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
             VStack {
@@ -20,7 +20,7 @@ struct Dices: View {
                     .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: isRolling)
 
                 DiceView(isRolling: $isRolling, diceCount: $diceCount)
-                    .frame(width: 400, height: 400)
+                    .frame(width: 500, height: 500)
                     .padding()
 
                 HStack {
@@ -48,7 +48,7 @@ struct Dices: View {
                             .foregroundColor(.white)
                             .padding()
                             .frame(width: 100)
-                            .background(Color.green)
+                            .background(Color.blue)
                             .cornerRadius(12)
                             .shadow(radius: 5)
                     }
@@ -66,7 +66,7 @@ struct Dices: View {
                             .shadow(radius: 3)
                     }
                 }
-                .padding(.top, 10)
+                .padding(.bottom, 30)
             }
             .padding()
         }

@@ -1,10 +1,3 @@
-//
-//  DiceView.swift
-//  challenge2
-//
-//  Created by Francesca Finetti on 07/11/24.
-//
-
 import SwiftUI
 import SceneKit
 
@@ -16,7 +9,7 @@ struct DiceView: UIViewRepresentable {
         let sceneView = SCNView()
         sceneView.allowsCameraControl = true
         sceneView.scene = createDiceScene()
-        sceneView.backgroundColor = .white
+        sceneView.backgroundColor = UIColor.clear
         context.coordinator.setup(sceneView: sceneView)
         return sceneView
     }
@@ -41,7 +34,6 @@ struct DiceView: UIViewRepresentable {
     private func createDiceScene() -> SCNScene {
         let scene = SCNScene()
         
-       
         let diceNode1 = createDiceNode(name: "diceNode1")
         scene.rootNode.addChildNode(diceNode1)
         
@@ -53,12 +45,22 @@ struct DiceView: UIViewRepresentable {
         diceNode3.isHidden = true
         scene.rootNode.addChildNode(diceNode3)
         
+        // Aggiungi luci per dare un effetto realistico
         let light = SCNLight()
         light.type = .omni
+        light.intensity = 1000
         let lightNode = SCNNode()
         lightNode.light = light
         lightNode.position = SCNVector3(5, 5, 5)
         scene.rootNode.addChildNode(lightNode)
+        
+        let ambientLight = SCNLight()
+        ambientLight.type = .ambient
+        ambientLight.intensity = 200
+        ambientLight.color = UIColor.darkGray
+        let ambientLightNode = SCNNode()
+        ambientLightNode.light = ambientLight
+        scene.rootNode.addChildNode(ambientLightNode)
         
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
@@ -69,11 +71,15 @@ struct DiceView: UIViewRepresentable {
     }
     
     private func createDiceNode(name: String) -> SCNNode {
-        let dice = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.1)
+        let dice = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.2)
+        
+        // Applica materiale lucido alle facce dei dadi
         let diceSymbols = ["die.face.1", "die.face.2", "die.face.3", "die.face.4", "die.face.5", "die.face.6"]
         let diceMaterials = diceSymbols.map { symbolName -> SCNMaterial in
             let material = SCNMaterial()
             material.diffuse.contents = createSymbolImage(symbolName: symbolName)
+            material.specular.contents = UIColor.white // Rende le facce lucide
+            material.shininess = 0.7
             return material
         }
         
@@ -133,7 +139,8 @@ struct DiceView: UIViewRepresentable {
             let rotationAnimation1 = CABasicAnimation(keyPath: "rotation")
             rotationAnimation1.fromValue = diceNode1.rotation
             rotationAnimation1.toValue = SCNVector4(x: 1, y: 1, z: 1, w: Float.pi * 8)
-            rotationAnimation1.duration = 0.5
+            rotationAnimation1.duration = 1.5
+            rotationAnimation1.timingFunction = CAMediaTimingFunction(name: .easeOut)
             rotationAnimation1.repeatCount = .infinity
             diceNode1.addAnimation(rotationAnimation1, forKey: "roll1")
             
@@ -141,7 +148,8 @@ struct DiceView: UIViewRepresentable {
                 let rotationAnimation2 = CABasicAnimation(keyPath: "rotation")
                 rotationAnimation2.fromValue = diceNode2.rotation
                 rotationAnimation2.toValue = SCNVector4(x: -1, y: -1, z: 1, w: Float.pi * 8)
-                rotationAnimation2.duration = 0.5
+                rotationAnimation2.duration = 1.5
+                rotationAnimation2.timingFunction = CAMediaTimingFunction(name: .easeOut)
                 rotationAnimation2.repeatCount = .infinity
                 diceNode2.addAnimation(rotationAnimation2, forKey: "roll2")
             }
@@ -150,7 +158,8 @@ struct DiceView: UIViewRepresentable {
                 let rotationAnimation3 = CABasicAnimation(keyPath: "rotation")
                 rotationAnimation3.fromValue = diceNode3.rotation
                 rotationAnimation3.toValue = SCNVector4(x: 1, y: -1, z: -1, w: Float.pi * 8)
-                rotationAnimation3.duration = 0.5
+                rotationAnimation3.duration = 1.5
+                rotationAnimation3.timingFunction = CAMediaTimingFunction(name: .easeOut)
                 rotationAnimation3.repeatCount = .infinity
                 diceNode3.addAnimation(rotationAnimation3, forKey: "roll3")
             }

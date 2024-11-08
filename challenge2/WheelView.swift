@@ -1,168 +1,214 @@
-import UIKit
 import SwiftUI
 
-class WheelViewController: UIViewController {
+struct Wheel: View {
+    @State private var playerNames: [String] = []
+    @State private var newPlayerName: String = ""
+    @State private var selectedPlayer: String? = nil
+    @State private var rotationAngle: Double = 0
+    @State private var showAlert = false
+    private let sliceColors: [Color] = [
+        .blue, .red, .green, .yellow, .cyan, .purple, .orange, .pink, .teal, .indigo
+    ]
     
-    // UI Elements
-    let wheelImageView = UIImageView()
-    let spinButton = UIButton(type: .system)
-    let nameTextField = UITextField()
-    let addButton = UIButton(type: .system)
-    var names: [String] = []
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        
-        setupWheel()
-        setupControls()
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    HStack {
+                        TextField("Player Name", text: $newPlayerName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal)
+                        
+                        Button(action: addPlayer) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.blue)
+                                    .frame(width: 80, height: 32)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                
+                                Text("Add")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .disabled(playerNames.count >= 10 || newPlayerName.isEmpty)
+                    }
+                    .padding(.top, 35)
+                    ScrollView {
+                        VStack(spacing: 5) {
+                            ForEach(playerNames, id: \.self) { name in
+                                HStack {
+                                    Text(name)
+                                        .font(.body)
+                                        .foregroundColor(.black)
+                                        .padding(.leading)
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        deletePlayer(name)
+                                    }) {
+                                        Image(systemName: "trash")
+                                            .foregroundColor(.red)
+                                            .padding()
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 40)
+                                .padding(.vertical, 5)
+                                .background(Color.white.opacity(0.9))
+                                .cornerRadius(10)
+                                .shadow(radius: 2)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .frame(height: 150)
+                    
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue.opacity(0.2))
+                            .frame(width: 300, height: 300)
+                            .overlay(Circle().stroke(Color.white, lineWidth: 5))
+                        
+                        ForEach(0..<playerNames.count, id: \.self) { index in
+                            let startAngle = Angle(degrees: Double(index) * 360.0 / Double(playerNames.count))
+                            let endAngle = Angle(degrees: Double(index + 1) * 360.0 / Double(playerNames.count))
+                            
+                            Path { path in
+                                path.move(to: CGPoint(x: 150, y: 150))
+                                path.addArc(
+                                    center: CGPoint(x: 150, y: 150),
+                                    radius: 150,
+                                    startAngle: startAngle,
+                                    endAngle: endAngle,
+                                    clockwise: false
+                                )
+                            }
+                            .fill(sliceColors[index % sliceColors.count])
+                            .overlay(
+                                Text(playerNames[index])
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .rotationEffect(startAngle + Angle(degrees: 180 / Double(playerNames.count)))
+                                    .position(
+                                        x: 150 + cos((startAngle.radians + endAngle.radians) / 2) * 100,
+                                        y: 150 + sin((startAngle.radians + endAngle.radians) / 2) * 100
+                                    )
+                            )
+                            .overlay(
+                                Path { path in
+                                    path.move(to: CGPoint(x: 150, y: 150))
+                                    path.addArc(
+                                        center: CGPoint(x: 150, y: 150),
+                                        radius: 150,
+                                        startAngle: startAngle,
+                                        endAngle: endAngle,
+                                        clockwise: false
+                                    )
+                                }
+                                    .stroke(Color.white, lineWidth: 1)
+                            )
+                        }
+                    }
+                    .frame(width: 300, height: 300)
+                    .rotationEffect(Angle(degrees: rotationAngle))
+                    
+                    Image(systemName: "triangle.fill")
+                        .font(.system(size: 30))
+                        .foregroundColor(.red)
+                        .offset(y: -20)
+                    
+                    HStack {
+                        Button(action: spinWheel) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.white)
+                                    .frame(width: 120, height: 50)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                
+                                Text("Spin")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 80)
+                        
+                        Button(action: resetGame) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.white)
+                                    .frame(width: 120, height: 50)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                
+                                Text("Reset")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 80)
+                    }
+                    
+                    Spacer()
+                }
+                .padding()
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Selected Player"),
+                    message: Text(selectedPlayer ?? "No Player Selected"),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
+        }
+        .navigationTitle("Spin the Wheel")
     }
     
-    // Set up the wheel image view
-    func setupWheel() {
-        wheelImageView.contentMode = .scaleAspectFit
-        wheelImageView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(wheelImageView)
-        
-        NSLayoutConstraint.activate([
-            wheelImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            wheelImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -50),
-            wheelImageView.widthAnchor.constraint(equalToConstant: 300),
-            wheelImageView.heightAnchor.constraint(equalToConstant: 300)
-        ])
-        
-        drawWheel()
-    }
     
-    // Set up controls for adding names and spinning the wheel
-    func setupControls() {
-        nameTextField.placeholder = "Enter name"
-        nameTextField.borderStyle = .roundedRect
-        nameTextField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(nameTextField)
-        
-        addButton.setTitle("Add", for: .normal)
-        addButton.addTarget(self, action: #selector(addName), for: .touchUpInside)
-        addButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(addButton)
-        
-        spinButton.setTitle("Spin the Wheel", for: .normal)
-        spinButton.addTarget(self, action: #selector(spinWheel), for: .touchUpInside)
-        spinButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(spinButton)
-        
-        NSLayoutConstraint.activate([
-            nameTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -50),
-            nameTextField.topAnchor.constraint(equalTo: wheelImageView.bottomAnchor, constant: 20),
-            nameTextField.widthAnchor.constraint(equalToConstant: 150),
-            
-            addButton.leadingAnchor.constraint(equalTo: nameTextField.trailingAnchor, constant: 10),
-            addButton.centerYAnchor.constraint(equalTo: nameTextField.centerYAnchor),
-            
-            spinButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20)
-        ])
-    }
     
-    // Add a new name to the list and redraw the wheel
-    @objc func addName() {
-        guard let name = nameTextField.text, !name.isEmpty else { return }
-        names.append(name)
-        nameTextField.text = ""
-        drawWheel() // Redraw the wheel with the new name
-    }
     
-    // Spin the wheel and choose a random name
-    @objc func spinWheel() {
-        guard !names.isEmpty else {
-            let alert = UIAlertController(title: "No Names", message: "Please add names before spinning the wheel.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
-            return
+    
+    
+    private func addPlayer() {
+        if !newPlayerName.isEmpty && playerNames.count < 10 {
+            playerNames.append(newPlayerName)
+            newPlayerName = ""
+        }
+    }
+    private func deletePlayer(_ name: String) {
+        playerNames.removeAll { $0 == name }
+    }
+    private func resetGame() {
+        playerNames.removeAll()
+        selectedPlayer = nil
+        rotationAngle = 0
+    }
+    private func spinWheel() {
+        let randomRotation = Double.random(in: 720...1440)
+        withAnimation(.easeOut(duration: 3)) {
+            rotationAngle += randomRotation
         }
         
-        let randomRotation = CGFloat(arc4random_uniform(360)) + 720 // Spin at least twice
-        let duration = 3.0
-        
-        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        rotationAnimation.toValue = (randomRotation * CGFloat.pi) / 180
-        rotationAnimation.duration = duration
-        rotationAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
-        rotationAnimation.isRemovedOnCompletion = false
-        rotationAnimation.fillMode = .forwards
-        wheelImageView.layer.add(rotationAnimation, forKey: "spinAnimation")
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-            self.showRandomName()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            let selectedIndex = Int((rotationAngle.truncatingRemainder(dividingBy: 360)) / (360 / Double(playerNames.count)))
+            selectedPlayer = playerNames[(playerNames.count - selectedIndex) % playerNames.count]
+            showAlert = true
         }
-    }
-    
-    // Show a random name as the result
-    func showRandomName() {
-        guard let chosenName = names.randomElement() else { return }
-        let alert = UIAlertController(title: "Congratulations!", message: "\(chosenName) was chosen!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
-    
-    // Draw the wheel with each person's name in a unique colored segment
-    func drawWheel() {
-        let size = CGSize(width: 300, height: 300)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        
-        guard let context = UIGraphicsGetCurrentContext() else { return }
-        
-        let center = CGPoint(x: size.width / 2, y: size.height / 2)
-        let radius = size.width / 2
-        let angleIncrement = CGFloat(2 * Double.pi) / CGFloat(names.count)
-
-        
-        for (index, name) in names.enumerated() {
-            // Generate a random color for each segment
-            let color = UIColor(hue: CGFloat(index) / CGFloat(names.count), saturation: 0.8, brightness: 0.9, alpha: 1.0)
-            color.setFill()
-            
-            // Calculate start and end angles for the segment
-            let startAngle = angleIncrement * CGFloat(index)
-            let endAngle = startAngle + angleIncrement
-            
-            // Draw the segment
-            context.move(to: center)
-            context.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
-            context.closePath()
-            context.fillPath()
-            
-            // Add the person's name as text on the segment
-            let textAngle = (startAngle + endAngle) / 2
-            let textPosition = CGPoint(
-                x: center.x + (radius * 0.7) * cos(textAngle) - 20,
-                y: center.y + (radius * 0.7) * sin(textAngle) - 10
-            )
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 12),
-                .foregroundColor: UIColor.white
-            ]
-            name.draw(at: textPosition, withAttributes: attributes)
-        }
-        
-        wheelImageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
     }
 }
 
-struct WheelViewController_Preview: PreviewProvider {
+
+
+struct Wheel_Previews: PreviewProvider {
     static var previews: some View {
-        // Use UIViewControllerPreview to display WheelViewController in Canvas
-        WheelViewControllerPreview()
-            .edgesIgnoringSafeArea(.all)
+        Wheel()
     }
 }
 
-// Helper struct to wrap UIViewController in SwiftUI
-struct WheelViewControllerPreview: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> WheelViewController {
-        return WheelViewController()
-    }
-    
-    func updateUIViewController(_ uiViewController: WheelViewController, context: Context) {}
-}

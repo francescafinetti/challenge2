@@ -19,7 +19,7 @@ struct TimerView: View {
 //                .font(.title)
 //                .fontWeight(.bold)
 //                .padding(.top, -50)
-//                
+//
             ZStack {
                 Circle()
                     .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
