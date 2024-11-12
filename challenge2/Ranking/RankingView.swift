@@ -1,10 +1,10 @@
 import SwiftUI
-import UIKit
-
 
 struct RankingView_: View {
     @State private var players: [Player] = []
     @State private var showingAddPlayerModal = false
+    @State private var showingSaveGameModal = false
+    @EnvironmentObject var gameManager: GameManager
     
     var body: some View {
         NavigationStack {
@@ -40,6 +40,25 @@ struct RankingView_: View {
             }
             .navigationTitle("Rankings")
             .toolbar {
+                // Pulsante "Reset"
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        resetPlayers()
+                    }) {
+                        Image(systemName: "arrow.counterclockwise")
+                    }
+                }
+                
+                // Pulsante "Salva"
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingSaveGameModal = true
+                    }) {
+                        Image(systemName: "checkmark")
+                    }
+                }
+                
+                // Pulsante "Aggiungi"
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingAddPlayerModal = true
@@ -50,6 +69,9 @@ struct RankingView_: View {
             }
             .sheet(isPresented: $showingAddPlayerModal) {
                 AddPlayerView(players: $players)
+            }
+            .sheet(isPresented: $showingSaveGameModal) {
+                SaveGameView(players: $players)
             }
         }
     }
@@ -63,10 +85,12 @@ struct RankingView_: View {
         players.sort { $0.playerpoints > $1.playerpoints }
     }
     
-    
+    private func resetPlayers() {
+        players.removeAll()
+    }
 }
-
 
 #Preview {
     RankingView_()
+        .environmentObject(GameManager())
 }
