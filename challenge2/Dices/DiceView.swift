@@ -7,9 +7,9 @@ struct DiceView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> SCNView {
         let sceneView = SCNView()
-        sceneView.allowsCameraControl = true
-        sceneView.scene = createDiceScene()
+        sceneView.allowsCameraControl = false
         sceneView.backgroundColor = UIColor.clear
+        sceneView.scene = createDiceScene()
         context.coordinator.setup(sceneView: sceneView)
         return sceneView
     }
@@ -22,7 +22,7 @@ struct DiceView: UIViewRepresentable {
             let randomFace1 = Int.random(in: 1...6)
             let randomFace2 = Int.random(in: 1...6)
             let randomFace3 = Int.random(in: 1...6)
-            print("Faccia selezionata Dado 1: \(randomFace1), Dado 2: \(randomFace2), Dado 3: \(randomFace3)")
+            print("Selected Face - Dice 1: \(randomFace1), Dice 2: \(randomFace2), Dice 3: \(randomFace3)")
             context.coordinator.stopOnFaces(randomFace1, randomFace2, randomFace3)
         }
     }
@@ -34,6 +34,7 @@ struct DiceView: UIViewRepresentable {
     private func createDiceScene() -> SCNScene {
         let scene = SCNScene()
         
+        // Carica i dadi dal file .usdz
         let diceNode1 = createDiceNode(name: "diceNode1")
         scene.rootNode.addChildNode(diceNode1)
         
@@ -45,54 +46,54 @@ struct DiceView: UIViewRepresentable {
         diceNode3.isHidden = true
         scene.rootNode.addChildNode(diceNode3)
         
-        // Aggiungi luci per dare un effetto realistico
-        let light = SCNLight()
-        light.type = .omni
-        light.intensity = 1000
-        let lightNode = SCNNode()
-        lightNode.light = light
-        lightNode.position = SCNVector3(5, 5, 5)
-        scene.rootNode.addChildNode(lightNode)
+        // Aggiungi luci per migliorare la visibilità
+        addOmniLight(to: scene)
         
-        let ambientLight = SCNLight()
-        ambientLight.type = .ambient
-        ambientLight.intensity = 200
-        ambientLight.color = UIColor.darkGray
-        let ambientLightNode = SCNNode()
-        ambientLightNode.light = ambientLight
-        scene.rootNode.addChildNode(ambientLightNode)
-        
+        // Aggiungi una fotocamera
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(0, 0, 5)
+        cameraNode.position = SCNVector3(0, 0, 100)
         scene.rootNode.addChildNode(cameraNode)
         
         return scene
     }
     
-    private func createDiceNode(name: String) -> SCNNode {
-        let dice = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.2)
+    private func addOmniLight(to scene: SCNScene) {
+        // Luce omnidirezionale principale
+        let omniLight = SCNLight()
+        omniLight.type = .omni
+        omniLight.type = .omni
+        omniLight.intensity = 0
+        omniLight.color = UIColor.white
+        let omniLightNode = SCNNode()
+        omniLightNode.light = omniLight
+        omniLightNode.position = SCNVector3(10, 10, 0)
+        scene.rootNode.addChildNode(omniLightNode)
         
-        // Applica materiale lucido alle facce dei dadi
-        let diceSymbols = ["die.face.1", "die.face.2", "die.face.3", "die.face.4", "die.face.5", "die.face.6"]
-        let diceMaterials = diceSymbols.map { symbolName -> SCNMaterial in
-            let material = SCNMaterial()
-            material.diffuse.contents = createSymbolImage(symbolName: symbolName)
-            material.specular.contents = UIColor.white // Rende le facce lucide
-            material.shininess = 0.7
-            return material
-        }
-        
-        dice.materials = diceMaterials
-        
-        let diceNode = SCNNode(geometry: dice)
-        diceNode.name = name
-        return diceNode
+        // Luce ambientale per ammorbidire le ombre
+        let ambientLight = SCNLight()
+        ambientLight.type = .ambient
+        ambientLight.intensity = 10000
+        ambientLight.color = UIColor.darkGray
+        let ambientLightNode = SCNNode()
+        ambientLightNode.light = ambientLight
+        scene.rootNode.addChildNode(ambientLightNode)
+
     }
     
-    private func createSymbolImage(symbolName: String) -> UIImage? {
-        let configuration = UIImage.SymbolConfiguration(pointSize: 80, weight: .bold, scale: .large)
-        return UIImage(systemName: symbolName, withConfiguration: configuration)
+    
+    
+    private func createDiceNode(name: String) -> SCNNode {
+        guard let diceScene = SCNScene(named: "Dice.scn"),
+              let diceNode = diceScene.rootNode.childNodes.first else {
+            print("Error: Unable to load Dice.usdz")
+            return SCNNode()
+        }
+        
+        diceNode.name = name
+        diceNode.scale = SCNVector3(0.1, 0.1, 0.1)
+        diceNode.position = SCNVector3(0, 0, 0)
+        return diceNode
     }
     
     class Coordinator: NSObject {
@@ -109,6 +110,7 @@ struct DiceView: UIViewRepresentable {
         }
         
         func updateDicePositions(diceCount: Int) {
+            let spacing: Float = 18 // Distanza tra i dadi per evitare sovrapposizioni
             switch diceCount {
             case 1:
                 diceNode1?.position = SCNVector3(0, 0, 0)
@@ -116,15 +118,15 @@ struct DiceView: UIViewRepresentable {
                 diceNode2?.isHidden = true
                 diceNode3?.isHidden = true
             case 2:
-                diceNode1?.position = SCNVector3(-0.8, 0, 0)
-                diceNode2?.position = SCNVector3(0.8, 0, 0)
+                diceNode1?.position = SCNVector3(-spacing, 0, 0)
+                diceNode2?.position = SCNVector3(spacing, 0, 0)
                 diceNode1?.isHidden = false
                 diceNode2?.isHidden = false
                 diceNode3?.isHidden = true
             case 3:
-                diceNode1?.position = SCNVector3(-1.5, 0, 0)
-                diceNode2?.position = SCNVector3(1.5, 0, 0)
-                diceNode3?.position = SCNVector3(0, 0, 0)
+                diceNode1?.position = SCNVector3(-spacing * 1.5, 0, 0)
+                diceNode2?.position = SCNVector3(0, 0, 0)
+                diceNode3?.position = SCNVector3(spacing * 1.5, 0, 0)
                 diceNode1?.isHidden = false
                 diceNode2?.isHidden = false
                 diceNode3?.isHidden = false
@@ -132,69 +134,45 @@ struct DiceView: UIViewRepresentable {
                 break
             }
         }
+
         
         func startRolling() {
-            guard let diceNode1 = diceNode1 else { return }
-            
-            let rotationAnimation1 = CABasicAnimation(keyPath: "rotation")
-            rotationAnimation1.fromValue = diceNode1.rotation
-            rotationAnimation1.toValue = SCNVector4(x: 1, y: 1, z: 1, w: Float.pi * 8)
-            rotationAnimation1.duration = 1.5
-            rotationAnimation1.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            rotationAnimation1.repeatCount = .infinity
-            diceNode1.addAnimation(rotationAnimation1, forKey: "roll1")
-            
-            if let diceNode2 = diceNode2, !diceNode2.isHidden {
-                let rotationAnimation2 = CABasicAnimation(keyPath: "rotation")
-                rotationAnimation2.fromValue = diceNode2.rotation
-                rotationAnimation2.toValue = SCNVector4(x: -1, y: -1, z: 1, w: Float.pi * 8)
-                rotationAnimation2.duration = 1.5
-                rotationAnimation2.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                rotationAnimation2.repeatCount = .infinity
-                diceNode2.addAnimation(rotationAnimation2, forKey: "roll2")
-            }
-            
-            if let diceNode3 = diceNode3, !diceNode3.isHidden {
-                let rotationAnimation3 = CABasicAnimation(keyPath: "rotation")
-                rotationAnimation3.fromValue = diceNode3.rotation
-                rotationAnimation3.toValue = SCNVector4(x: 1, y: -1, z: -1, w: Float.pi * 8)
-                rotationAnimation3.duration = 1.5
-                rotationAnimation3.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                rotationAnimation3.repeatCount = .infinity
-                diceNode3.addAnimation(rotationAnimation3, forKey: "roll3")
+            [diceNode1, diceNode2, diceNode3].forEach { diceNode in
+                guard let diceNode = diceNode, !diceNode.isHidden else { return }
+                
+                let rotationAnimation = CABasicAnimation(keyPath: "rotation")
+                rotationAnimation.fromValue = diceNode.rotation
+                rotationAnimation.toValue = SCNVector4(x: 1, y: 1, z: 1, w: Float.pi * 8)
+                rotationAnimation.duration = 1.5
+                rotationAnimation.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                rotationAnimation.repeatCount = .infinity
+                diceNode.addAnimation(rotationAnimation, forKey: "roll")
             }
         }
         
         func stopOnFaces(_ face1: Int, _ face2: Int, _ face3: Int) {
-            guard let diceNode1 = diceNode1 else { return }
-            diceNode1.removeAllAnimations()
-            
-            let faceRotations: [Int: SCNVector4] = [
-                1: SCNVector4(1, 0, 0, Float.pi / 2),
-                2: SCNVector4(0, 0, 1, Float.pi),
-                3: SCNVector4(1, 0, 0, -Float.pi / 2),
-                4: SCNVector4(0, 0, 1, Float.pi / 2),
-                5: SCNVector4(0, 0, 1, -Float.pi / 2),
-                6: SCNVector4(1, 0, 0, 0)
-            ]
-            
-            if let rotation1 = faceRotations[face1] {
-                diceNode1.rotation = rotation1
-            }
-            
-            if let diceNode2 = diceNode2, !diceNode2.isHidden {
-                diceNode2.removeAllAnimations()
-                if let rotation2 = faceRotations[face2] {
-                    diceNode2.rotation = rotation2
-                }
-            }
-            
-            if let diceNode3 = diceNode3, !diceNode3.isHidden {
-                diceNode3.removeAllAnimations()
-                if let rotation3 = faceRotations[face3] {
-                    diceNode3.rotation = rotation3
+            [diceNode1, diceNode2, diceNode3].enumerated().forEach { index, diceNode in
+                guard let diceNode = diceNode, !diceNode.isHidden else { return }
+                diceNode.removeAllAnimations()
+                
+                let faceRotations: [Int: SCNVector4] = [
+                    1: SCNVector4(1, 0, 0, Float.pi / 2),
+                    2: SCNVector4(0, 0, 1, Float.pi),
+                    3: SCNVector4(1, 0, 0, -Float.pi / 2),
+                    4: SCNVector4(0, 0, 1, Float.pi / 2),
+                    5: SCNVector4(0, 0, 1, -Float.pi / 2),
+                    6: SCNVector4(1, 0, 0, 0)
+                ]
+                
+                let face = [face1, face2, face3][index]
+                if let rotation = faceRotations[face] {
+                    diceNode.rotation = rotation
                 }
             }
         }
     }
+}
+
+#Preview {
+    Dices()
 }
