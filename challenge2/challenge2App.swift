@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct challenge2App: App {
+struct LudiKitApp: App {
     @StateObject private var gameManager = GameManager()
     
     var body: some Scene {

@@ -13,6 +13,8 @@ struct ContentView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
+                        
+                        Spacer()
                         Text("Tools")
                             .font(.largeTitle)
                             .fontWeight(.bold)

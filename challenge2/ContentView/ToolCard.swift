@@ -23,7 +23,7 @@ struct ToolCard: View {
                 .multilineTextAlignment(.center) // Center text in multiple lines
                 .frame(maxWidth: .infinity, alignment: .center) // Center align subtitle
         }
-        .frame(width: 135, height: 260)
+        .frame(width: 135, height: 240)
         .padding()
         .background(Color.white)
         .cornerRadius(15)

@@ -12,98 +12,116 @@ struct TimerView: View {
     @State private var isCountingDown = false
     @State private var isTimerRunning = false
     let maxTime: CGFloat = 40000000.0
-
+    
     var body: some View {
-        VStack(spacing: 20) {
-            
+        NavigationStack{
             ZStack {
-                
-                Circle()
-                    .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
-                    .frame(width: 200, height: 200)
-                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
-                
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(Color.blue, style: StrokeStyle(lineWidth: 40, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .frame(width: 200, height: 200)
-                    .animation(.linear, value: progress)
-                
-                if isCountingDown {
-                    Text("\(countdown)")
-                        .font(.system(size: 100, weight: .bold))
-                        .foregroundColor(.blue)
-                } else {
-                    Text(timeFormatted(totalSeconds: Int((1 - progress) * selectedTime)))
-                        .font(.largeTitle)
-                        .bold()
+                LinearGradient(
+                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+                VStack(spacing: 20) {
+                    ZStack {
+                        Circle()
+                            .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
+                            .frame(width: 200, height: 200)
+                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(Color.blue, style: StrokeStyle(lineWidth: 40, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .frame(width: 200, height: 200)
+                            .animation(.linear, value: progress)
+                        if isCountingDown {
+                            Text("\(countdown)")
+                                .font(.system(size: 100, weight: .bold))
+                                .foregroundColor(.blue)
+                        } else {
+                            Text(timeFormatted(totalSeconds: Int((1 - progress) * selectedTime)))
+                                .font(.largeTitle)
+                                .bold()
+                        }
+                    }
+                    .padding(.top, -50)
+                    .padding(50)
+
+                    VStack {
+                        Text("Set the duration")
+                            .font(.headline)
+                        
+                        HStack(spacing: 2) { // Reduced spacing here
+                            TextField("Minutes", text: $selectedMinutesText)
+                                .keyboardType(.numberPad)
+                                .frame(width: 40) // Adjust width if needed
+                                .multilineTextAlignment(.center)
+                                .padding(.trailing, -5) // Tighten spacing with colon
+                            
+                            Text(":")
+                                .padding(.horizontal, -5) // Further reduces space around colon
+                            
+                            TextField("Seconds", text: $selectedSecondsText)
+                                .keyboardType(.numberPad)
+                                .frame(width: 40) // Adjust width if needed
+                                .multilineTextAlignment(.center)
+                                .padding(.leading, -5) // Tighten spacing with colon
+                        }
+                        .padding(.horizontal, 10) // Adjusts padding around whole HStack if needed
+                    }
+                    HStack {
+                        Button(action: isTimerRunning ? stopTimer : startCountdown) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.white)
+                                    .frame(width: 120, height: 50)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                
+                                Text(isTimerRunning ? "Cancel" : "Start")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.black)
+                            }.offset(x: -20, y: 0)
+                        }
+                        
+                        Button(action: togglePauseOrContinue) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.white)
+                                    .frame(width: 120, height: 50)
+                                    .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+                                
+                                Text(isPaused ? "Resume" : "Pause")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(.red)
+                            }.offset(x: 20, y: 0)
+                        }
+                    }
+                }
+                .onDisappear {
+                    timer?.invalidate()
+                    countdownTimer?.invalidate()
                 }
             }
-            .padding(.top, -50)
-            .padding(50)
+            .navigationTitle("Timer")
+            .navigationBarTitleDisplayMode(.large)
             
-            VStack {
-                Text("Set the duration")
-                    .font(.headline)
-                
-                HStack(spacing: 2) { // Reduced spacing here
-                    TextField("Minutes", text: $selectedMinutesText)
-                        .keyboardType(.numberPad)
-                        .frame(width: 40) // Adjust width if needed
-                        .multilineTextAlignment(.center)
-                        .padding(.trailing, -5) // Tighten spacing with colon
-                    
-                    Text(":")
-                        .padding(.horizontal, -5) // Further reduces space around colon
-                    
-                    TextField("Seconds", text: $selectedSecondsText)
-                        .keyboardType(.numberPad)
-                        .frame(width: 40) // Adjust width if needed
-                        .multilineTextAlignment(.center)
-                        .padding(.leading, -5) // Tighten spacing with colon
-                }
-                .padding(.horizontal, 10) // Adjusts padding around whole HStack if needed
-            }
-
-            HStack {
-                Button(action: isTimerRunning ? stopTimer : startCountdown) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white)
-                            .frame(width: 120, height: 50)
-                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                        
-                        Text(isTimerRunning ? "Cancel" : "Start")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.black)
-                    }.offset(x: -20, y: 0)
-                }
-                
-                Button(action: togglePauseOrContinue) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white)
-                            .frame(width: 120, height: 50)
-                            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-                        
-                        Text(isPaused ? "Resume" : "Pause")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.red)
-                    }.offset(x: 20, y: 0)
-                }
-            }
         }
-        .onDisappear {
-            timer?.invalidate()
-            countdownTimer?.invalidate()
-        }
-        .navigationTitle("Timer")
-        .navigationBarTitleDisplayMode(.inline)
     }
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     func startCountdown() {
         if let minutes = Int(selectedMinutesText), let seconds = Int(selectedSecondsText), minutes >= 0, seconds >= 0, CGFloat(minutes * 60 + seconds) <= maxTime {
             selectedTime = CGFloat(minutes * 60 + seconds)
@@ -128,7 +146,7 @@ struct TimerView: View {
             }
         }
     }
-
+    
     func startTimer() {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
@@ -140,7 +158,7 @@ struct TimerView: View {
             }
         }
     }
-
+    
     func togglePauseOrContinue() {
         if isPaused {
             isPaused = false
@@ -150,7 +168,7 @@ struct TimerView: View {
             timer?.invalidate()
         }
     }
-
+    
     func stopTimer() {
         timer?.invalidate()
         countdownTimer?.invalidate()

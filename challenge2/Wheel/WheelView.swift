@@ -79,7 +79,7 @@ struct Wheel: View {
                     .padding(.bottom, 20)
                 }
             }
-            .navigationTitle("Spin the Wheel")
+            .navigationTitle("Wheel")
             .toolbar {
                 // Pulsante per aprire la lista dei giocatori
                 ToolbarItem(placement: .navigationBarLeading) {

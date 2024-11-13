@@ -27,8 +27,6 @@ struct RandomTokenView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        
-                        // Sezione per aggiungere Token
                         Section(header: Text("Add Tokens").font(.title3).bold()) {
                             // Conteggio dei token per ogni colore
                             let colorCounts = countTokensByColor(tokens: tokens)

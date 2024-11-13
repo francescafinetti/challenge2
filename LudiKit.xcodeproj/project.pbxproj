@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		F96F2CBF2CD8CC43002759C5 /* challenge2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = challenge2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F96F2CBF2CD8CC43002759C5 /* LudiKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LudiKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,7 +40,7 @@
 		F96F2CC02CD8CC43002759C5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F96F2CBF2CD8CC43002759C5 /* challenge2.app */,
+				F96F2CBF2CD8CC43002759C5 /* LudiKit.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F96F2CBE2CD8CC43002759C5 /* challenge2 */ = {
+		F96F2CBE2CD8CC43002759C5 /* LudiKit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F96F2CCD2CD8CC45002759C5 /* Build configuration list for PBXNativeTarget "challenge2" */;
+			buildConfigurationList = F96F2CCD2CD8CC45002759C5 /* Build configuration list for PBXNativeTarget "LudiKit" */;
 			buildPhases = (
 				F96F2CBB2CD8CC43002759C5 /* Sources */,
 				F96F2CBC2CD8CC43002759C5 /* Frameworks */,
@@ -63,11 +63,11 @@
 			fileSystemSynchronizedGroups = (
 				F96F2CC12CD8CC43002759C5 /* challenge2 */,
 			);
-			name = challenge2;
+			name = LudiKit;
 			packageProductDependencies = (
 			);
 			productName = challenge2;
-			productReference = F96F2CBF2CD8CC43002759C5 /* challenge2.app */;
+			productReference = F96F2CBF2CD8CC43002759C5 /* LudiKit.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F96F2CBA2CD8CC43002759C5 /* Build configuration list for PBXProject "challenge2" */;
+			buildConfigurationList = F96F2CBA2CD8CC43002759C5 /* Build configuration list for PBXProject "LudiKit" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F96F2CBE2CD8CC43002759C5 /* challenge2 */,
+				F96F2CBE2CD8CC43002759C5 /* LudiKit */,
 			);
 		};
 /* End PBXProject section */
@@ -305,7 +305,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F96F2CBA2CD8CC43002759C5 /* Build configuration list for PBXProject "challenge2" */ = {
+		F96F2CBA2CD8CC43002759C5 /* Build configuration list for PBXProject "LudiKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F96F2CCB2CD8CC45002759C5 /* Debug */,
@@ -314,7 +314,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F96F2CCD2CD8CC45002759C5 /* Build configuration list for PBXNativeTarget "challenge2" */ = {
+		F96F2CCD2CD8CC45002759C5 /* Build configuration list for PBXNativeTarget "LudiKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F96F2CCE2CD8CC45002759C5 /* Debug */,
