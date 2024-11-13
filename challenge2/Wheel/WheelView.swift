@@ -11,7 +11,11 @@ struct Wheel: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.4), Color.gray.opacity(0.2)]), startPoint: .top, endPoint: .bottom)
+                LinearGradient(
+                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                    )
                     .ignoresSafeArea()
                 
                 VStack(spacing: 20) {

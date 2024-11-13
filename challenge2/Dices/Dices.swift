@@ -7,9 +7,10 @@ struct Dices: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.gray.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
 
+            
             VStack {
                 Text("Roll the Dices")
                     .font(.largeTitle)

@@ -15,7 +15,9 @@ struct TimerView: View {
 
     var body: some View {
         VStack(spacing: 20) {
+            
             ZStack {
+                
                 Circle()
                     .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
                     .frame(width: 200, height: 200)

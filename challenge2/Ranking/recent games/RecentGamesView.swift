@@ -7,7 +7,7 @@ struct RecentGamesView: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -74,6 +74,7 @@ struct RecentGamesView: View {
                                     .shadow(radius: 5)
                                 }
                             }
+                            .onDelete(perform: deleteGame) // Aggiunto .onDelete
                             .listRowBackground(Color.clear)
                         }
                         .listStyle(PlainListStyle())
@@ -85,6 +86,11 @@ struct RecentGamesView: View {
         }
     }
     
+    /// Metodo per eliminare una partita
+    private func deleteGame(at offsets: IndexSet) {
+        gameManager.recentGames.remove(atOffsets: offsets)
+    }
+    
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -94,6 +100,23 @@ struct RecentGamesView: View {
 }
 
 #Preview {
-    RecentGamesView()
-        .environmentObject(GameManager())
+    let samplePlayers = [
+        Player(image: nil, testo: "Player 1", playerpoints: 50, playerBadge: "⭐️"),
+        Player(image: nil, testo: "Player 2", playerpoints: 30, playerBadge: "🏅"),
+        Player(image: nil, testo: "Player 3", playerpoints: 20, playerBadge: "🎖️")
+    ]
+    
+    let sampleGame = GameSession(
+        name: "Sample Game",
+        date: Date(),
+        players: samplePlayers,
+        image: nil,
+        description: "An exciting game played with friends."
+    )
+    
+    let gameManager = GameManager()
+    gameManager.recentGames = [sampleGame]
+    
+    return RecentGamesView()
+        .environmentObject(gameManager)
 }

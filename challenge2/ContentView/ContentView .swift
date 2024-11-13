@@ -5,7 +5,7 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -23,7 +23,9 @@ struct ContentView: View {
                             NavigationLink(destination: TimerView()) {
                                 ToolCard(iconName: "timer", title: "Timer", subtitle: "Set a Timer!")
                             }
-                            ToolCard(iconName: "bag.fill", title: "Random Token", subtitle: "random token bag filled picker")
+                            NavigationLink(destination: RandomTokenView()) {
+                                ToolCard(iconName: "bag.fill", title: "Random Token", subtitle: "random token bag filled picker")
+                            }
                             
                             NavigationLink(destination: Dices()) {
                                 ToolCard(iconName: "dice.fill", title: "Dice Roller", subtitle: "Roll one or multiple dices!")

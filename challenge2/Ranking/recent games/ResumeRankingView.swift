@@ -1,10 +1,3 @@
-//
-//  Untitled.swift
-//  challenge2
-//
-//  Created by Francesca Finetti on 12/11/24.
-//
-
 import SwiftUI
 
 struct ResumeRankingView: View {
@@ -12,6 +5,8 @@ struct ResumeRankingView: View {
     @EnvironmentObject var gameManager: GameManager
     @Environment(\.dismiss) var dismiss
     let game: GameSession
+    @State private var selectedPlayerIndex: Int?
+    @State private var showingImagePicker = false
 
     init(game: GameSession) {
         self.game = game
@@ -20,77 +15,78 @@ struct ResumeRankingView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                if players.isEmpty {
-                    Text("No players available")
-                        .font(.title)
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    List {
-                        ForEach(players.indices, id: \.self) { index in
-                            playerEntry(player: $players[index])
-                                .padding(.vertical, 4)
+            Form {
+                ForEach(players.indices, id: \.self) { index in
+                    Section(header: Text("Player \(index + 1)")) {
+                        HStack {
+                            // Campo per il nome del giocatore
+                            TextField("Player Name", text: $players[index].testo)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
+                            // Pulsante per eliminare il giocatore
+                            Button(action: {
+                                deletePlayer(at: index)
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                            }
                         }
-                        .onDelete(perform: deletePlayer)
+                        
+                        // Campo per i punti del giocatore
+                        TextField("Points", value: $players[index].playerpoints, format: .number)
+                            .keyboardType(.numberPad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        
+                        // Pulsante per selezionare un'immagine
+                        Button(action: {
+                            selectedPlayerIndex = index
+                            showingImagePicker = true
+                        }) {
+                            HStack {
+                                if let image = players[index].image {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .frame(width: 50, height: 50)
+                                        .clipShape(Circle())
+                                        .shadow(radius: 5)
+                                } else {
+                                    Image(systemName: "person.crop.circle.fill.badge.plus")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.blue)
+                                }
+                                Text("Select Image")
+                            }
+                        }
                     }
-                    .listStyle(PlainListStyle())
-                    .cornerRadius(15)
-                    .padding()
                 }
-                
-                Spacer()
-                
-                Button(action: {
-                    saveGame()
-                    dismiss()
-                }) {
-                    Text("Save & Exit")
-                        .font(.headline)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+            }
+            .navigationTitle("Edit Players")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
                 }
-                .padding()
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Save") {
+                        saveGame()
+                        dismiss()
+                    }
+                }
             }
-            .navigationTitle("Resume Game: \(game.name)")
-        }
-    }
-    
-    private func playerEntry(player: Binding<Player>) -> some View {
-        HStack {
-            // Mostra l'immagine del giocatore se disponibile
-            if let image = player.wrappedValue.image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
-                    .padding(.trailing, 8)
-            }
-            
-            VStack(alignment: .leading) {
-                Text(player.wrappedValue.testo)
-                    .font(.headline)
-                
-                HStack {
-                    Text("Points:")
-                    
-                    // Modifica qui per utilizzare correttamente $player
-                    TextField("Points", value: player.playerpoints, formatter: NumberFormatter())
-                        .keyboardType(.numberPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 60)
+            .sheet(isPresented: $showingImagePicker) {
+                if let selectedIndex = selectedPlayerIndex {
+                    ImagePicker(selectedImage: $players[selectedIndex].image)
                 }
             }
         }
     }
-
     
-    private func deletePlayer(at offsets: IndexSet) {
-        players.remove(atOffsets: offsets)
+    /// Funzione per eliminare un giocatore
+    private func deletePlayer(at index: Int) {
+        players.remove(at: index)
     }
     
     private func saveGame() {

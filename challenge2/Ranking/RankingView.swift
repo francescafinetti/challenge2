@@ -10,7 +10,7 @@ struct RankingView_: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.white, Color.gray.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -28,6 +28,7 @@ struct RankingView_: View {
                             ForEach(players.indices, id: \.self) { index in
                                 playerEntry(player: $players[index], players: $players)
                                     .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
                                     .padding(.vertical, 4)
                             }
                             .onDelete(perform: deletePlayer)
