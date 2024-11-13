@@ -142,7 +142,7 @@ struct Wheel: View {
             // Calcolo del giocatore selezionato
             let sliceAngle = 360.0 / Double(players.count)
             let normalizedAngle = (rotationAngle.truncatingRemainder(dividingBy: 360) + 360).truncatingRemainder(dividingBy: 360)
-            let selectedIndex = Int((270.0 - normalizedAngle + 360).truncatingRemainder(dividingBy: 360) / sliceAngle)
+            let selectedIndex = Int((360.0 - normalizedAngle + 90).truncatingRemainder(dividingBy: 360) / sliceAngle)
             
             selectedPlayer = players[selectedIndex % players.count].name
             showAlert = true
