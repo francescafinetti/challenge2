@@ -5,7 +5,7 @@ struct ContentView: View {
         NavigationView {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )

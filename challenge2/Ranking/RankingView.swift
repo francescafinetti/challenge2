@@ -10,7 +10,7 @@ struct RankingView_: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -30,8 +30,17 @@ struct RankingView_: View {
                                     .listRowBackground(Color.clear)
                                     .listRowSeparator(.hidden)
                                     .padding(.vertical, 4)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                        Button(role: .destructive) {
+                                            deletePlayer(at: IndexSet(integer: index))
+                                        } label: {
+                                            Label("", systemImage: "trash") // Rimuovi testo per ridurre l'altezza visiva
+                                                .font(.system(size: 16)) // Riduci la dimensione del font per il simbolo
+                                                .frame(width: 50, height: 50) // Imposta un frame più piccolo
+                                        }
+                                        .tint(.red)
+                                    }
                             }
-                            .onDelete(perform: deletePlayer)
                         }
                         .listStyle(PlainListStyle())
                         .cornerRadius(15)
@@ -41,7 +50,6 @@ struct RankingView_: View {
             }
             .navigationTitle("Rankings")
             .toolbar {
-                // Pulsante "Reset"
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         resetPlayers()
@@ -50,7 +58,6 @@ struct RankingView_: View {
                     }
                 }
                 
-                // Pulsante "Salva"
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingSaveGameModal = true
@@ -59,7 +66,6 @@ struct RankingView_: View {
                     }
                 }
                 
-                // Pulsante "Aggiungi"
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         showingAddPlayerModal = true

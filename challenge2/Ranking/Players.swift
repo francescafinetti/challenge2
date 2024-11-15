@@ -19,8 +19,13 @@ struct playerEntry: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 15)
-                .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                .fill(
+                    LinearGradient(
+                        gradient: Gradient(colors: [.white, .accentColor.opacity(0.05)]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
                 .frame(width: 350, height: 130)
             
             HStack {
@@ -164,4 +169,3 @@ struct AddPlayerView: View {
         players.sort { $0.playerpoints > $1.playerpoints }
     }
 }
-
