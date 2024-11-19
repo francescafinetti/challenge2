@@ -65,7 +65,7 @@ struct playerEntry: View {
                     showAlert = true
                 }) {
                     Image(systemName: "pencil")
-                        .foregroundColor(.blue)
+                        .foregroundColor(.accentColor)
                         .font(.system(size: 24))
                 }
                 .alert("Actual Score", isPresented: $showAlert) {
@@ -135,7 +135,7 @@ struct AddPlayerView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 50, height: 50)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.accentColor)
                             }
                             Text("Select Image")
                         }

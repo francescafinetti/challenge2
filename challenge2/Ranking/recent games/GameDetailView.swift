@@ -10,7 +10,7 @@ struct GameDetailView: View {
             ZStack {
                 // Sfondo gradiente per mantenere lo stesso stile
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -98,7 +98,7 @@ struct GameDetailView: View {
                             .font(.headline)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue)
+                            .background(Color.accentColor)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }

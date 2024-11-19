@@ -13,7 +13,7 @@ struct NewPlayerView: View {
     @Binding var players: [Player2]
     
     @State private var name: String = ""
-    @State private var selectedColor: Color = .blue
+    @State private var selectedColor: Color = .accentColor
     
     var body: some View {
         NavigationStack {

@@ -54,7 +54,7 @@ struct ResumeRankingView: View {
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 50, height: 50)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.accentColor)
                                 }
                                 Text("Select Image")
                             }

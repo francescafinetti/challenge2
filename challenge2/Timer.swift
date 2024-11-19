@@ -17,7 +17,7 @@ struct TimerView: View {
         NavigationStack{
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -27,17 +27,17 @@ struct TimerView: View {
                         Circle()
                             .stroke(Color(red: 0.90, green: 0.90, blue: 0.90), lineWidth: 40)
                             .frame(width: 200, height: 200)
-                            .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 5)
+                            .shadow(color: Color.black.opacity(0.2), radius: 7.5, x: 0, y: 0)
                         Circle()
                             .trim(from: 0, to: progress)
-                            .stroke(Color.blue, style: StrokeStyle(lineWidth: 40, lineCap: .round))
+                            .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 40, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                             .frame(width: 200, height: 200)
                             .animation(.linear, value: progress)
                         if isCountingDown {
                             Text("\(countdown)")
                                 .font(.system(size: 100, weight: .bold))
-                                .foregroundColor(.blue)
+                                .foregroundColor(.accentColor)
                         } else {
                             Text(timeFormatted(totalSeconds: Int((1 - progress) * selectedTime)))
                                 .font(.largeTitle)
@@ -46,7 +46,7 @@ struct TimerView: View {
                     }
                     .padding(.top, -50)
                     .padding(50)
-
+                    
                     VStack {
                         Text("Set the duration")
                             .font(.headline)

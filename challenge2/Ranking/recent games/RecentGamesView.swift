@@ -7,7 +7,7 @@ struct RecentGamesView: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -61,7 +61,7 @@ struct RecentGamesView: View {
                                             Text("\(game.players.count)")
                                                 .font(.title3)
                                                 .fontWeight(.bold)
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(.accentColor)
                                             
                                             Text("players")
                                                 .font(.footnote)
@@ -69,9 +69,9 @@ struct RecentGamesView: View {
                                         }
                                     }
                                     .padding()
-                                    .background(Color.white.opacity(0.8))
+                                    .background(Color.white.opacity(1))
                                     .cornerRadius(15)
-                                    .shadow(radius: 5)
+                                    .shadow(radius: 0)
                                 }
                             }
                             .onDelete(perform: deleteGame) // Aggiunto .onDelete

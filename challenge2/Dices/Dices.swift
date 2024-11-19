@@ -8,7 +8,7 @@ struct Dices: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.4), Color.white.opacity(0.6)]), startPoint: .top, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.4), Color.accentColor.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 
                 
@@ -42,7 +42,7 @@ struct Dices: View {
                                 .foregroundColor(.white)
                                 .padding()
                                 .frame(width: 100)
-                                .background(Color.blue)
+                                .background(Color.accentColor)
                                 .cornerRadius(12)
                                 .shadow(radius: 5)
                         }

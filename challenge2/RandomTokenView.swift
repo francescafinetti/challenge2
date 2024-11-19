@@ -19,7 +19,7 @@ struct RandomTokenView: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -60,7 +60,7 @@ struct RandomTokenView: View {
                                         .padding()
                                         .bold()
                                         .background(LinearGradient(
-                                            gradient: Gradient(colors: [.blue, .blue]),
+                                            gradient: Gradient(colors: [.accentColor, .accentColor]),
                                             startPoint: .leading,
                                             endPoint: .trailing
                                         ))
@@ -115,7 +115,7 @@ struct RandomTokenView: View {
                                             .padding()
                                             .bold()
                                             .background(LinearGradient(
-                                                gradient: Gradient(colors: [.blue, .blue]),
+                                                gradient: Gradient(colors: [.accentColor, .accentColor]),
                                                 startPoint: .leading,
                                                 endPoint: .trailing
                                             ))

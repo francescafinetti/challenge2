@@ -9,7 +9,7 @@ struct ToolCard: View {
         VStack(alignment: .center, spacing: 5) { // Center align VStack
             Image(systemName: iconName)
                 .font(.system(size: 100))
-                .foregroundColor(Color.blue)
+                .foregroundColor(Color.accentColor)
                 .frame(maxWidth: .infinity, alignment: .center)
             
             Text(title)

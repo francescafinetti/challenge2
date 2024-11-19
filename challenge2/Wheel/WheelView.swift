@@ -12,7 +12,7 @@ struct Wheel: View {
         NavigationStack {
             ZStack {
                 LinearGradient(
-                    gradient: Gradient(colors: [.white, .blue.opacity(0.2)]),
+                    gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),
                     startPoint: .top,
                     endPoint: .bottom
                     )
@@ -22,7 +22,7 @@ struct Wheel: View {
                     // Ruota dei giocatori
                     ZStack {
                         Circle()
-                            .fill(Color.blue.opacity(0.2))
+                            .fill(Color.accentColor.opacity(0.2))
                             .frame(width: 300, height: 300)
                             .overlay(Circle().stroke(Color.white, lineWidth: 5))
                         
