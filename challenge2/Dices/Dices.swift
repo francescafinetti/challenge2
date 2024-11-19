@@ -29,8 +29,9 @@ struct Dices: View {
                                 .padding()
                                 .background(Color.white.opacity(0.8))
                                 .clipShape(Circle())
-                                .offset(x:-220)
                         }
+
+                        Spacer()
 
                         Button(action: {
                             isCameraPresented = true
@@ -44,7 +45,6 @@ struct Dices: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    .offset(x: 110)
 
                     Spacer()
 
@@ -58,12 +58,10 @@ struct Dices: View {
                             Image(systemName: "minus")
                                 .font(.title)
                                 .foregroundColor(.white)
-                                .frame(width: 20, height: 20)
-                                .padding()
+                                .frame(width: 50, height: 50)
                                 .background(Color.gray.opacity(0.3))
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
-                            
                         }
 
                         Button(action: {
@@ -90,8 +88,7 @@ struct Dices: View {
                             Image(systemName: "plus")
                                 .font(.title)
                                 .foregroundColor(.white)
-                                .frame(width: 20, height: 20)
-                                .padding()
+                                .frame(width: 50, height: 50)
                                 .background(Color.gray.opacity(0.3))
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
@@ -100,6 +97,7 @@ struct Dices: View {
 
                     Spacer()
                 }
+                .padding()
             }
             .navigationTitle("Dices")
             .navigationBarTitleDisplayMode(.automatic)
