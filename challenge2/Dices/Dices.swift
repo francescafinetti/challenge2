@@ -1,22 +1,56 @@
 import SwiftUI
-import SceneKit
+import AVFoundation
+import Vision
 
 struct Dices: View {
     @State private var isRolling = false
     @State private var diceCount = 1
-    
+    @State private var isCameraPresented = false
+    @State private var prediction: String = "No predictions yet" // Per il risultato del modello
+    @State private var isModalPresented = false // Stato per mostrare la lista
+    @State private var savedPredictions: [String] = [] // Lista delle predizioni salvate
+
     var body: some View {
         NavigationStack {
             ZStack {
+                // Sfondo
                 LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.4), Color.accentColor.opacity(0.4)]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
-                
-                
-                VStack {
+
+                VStack(spacing: 0) {
+                    // HStack per i pulsanti di navigazione
+                    HStack {
+                        Button(action: {
+                            isModalPresented = true
+                        }) {
+                            Image(systemName: "list.bullet")
+                                .font(.title2)
+                                .foregroundColor(.accentColor)
+                                .padding()
+                                .background(Color.white.opacity(0.8))
+                                .clipShape(Circle())
+                                .offset(x:-220)
+                        }
+
+                        Button(action: {
+                            isCameraPresented = true
+                        }) {
+                            Image(systemName: "camera")
+                                .font(.title2)
+                                .foregroundColor(.accentColor)
+                                .padding()
+                                .background(Color.white.opacity(0.8))
+                                .clipShape(Circle())
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .offset(x: 110)
+
+                    Spacer()
+
                     DiceView(isRolling: $isRolling, diceCount: $diceCount)
-                        .frame(width: 500, height: 500)
-                        .padding()
-                    
+                        .frame(width: 400, height: 400)
+
                     HStack {
                         Button(action: {
                             if diceCount > 1 { diceCount -= 1 }
@@ -24,12 +58,14 @@ struct Dices: View {
                             Image(systemName: "minus")
                                 .font(.title)
                                 .foregroundColor(.white)
+                                .frame(width: 20, height: 20)
                                 .padding()
                                 .background(Color.gray.opacity(0.3))
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
+                            
                         }
-                        
+
                         Button(action: {
                             isRolling = true
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -47,25 +83,57 @@ struct Dices: View {
                                 .shadow(radius: 5)
                         }
                         .padding(.horizontal, 10)
-                        
+
                         Button(action: {
                             if diceCount < 3 { diceCount += 1 }
                         }) {
                             Image(systemName: "plus")
                                 .font(.title)
                                 .foregroundColor(.white)
+                                .frame(width: 20, height: 20)
                                 .padding()
                                 .background(Color.gray.opacity(0.3))
                                 .clipShape(Circle())
                                 .shadow(radius: 3)
                         }
                     }
-                    .padding(.bottom, 30)
+
+                    Spacer()
                 }
-                .padding()
             }
-        }.navigationTitle("Dices")
-        .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("Dices")
+            .navigationBarTitleDisplayMode(.automatic)
+        }
+        .sheet(isPresented: $isCameraPresented) {
+            CameraLiveView(prediction: $prediction, savedPredictions: $savedPredictions)
+                .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isModalPresented) {
+            NavigationStack {
+                List {
+                    ForEach(savedPredictions, id: \.self) { prediction in
+                        Text(prediction)
+                    }
+                    .onDelete(perform: deletePrediction) // Gestisce l'eliminazione
+                }
+                .navigationTitle("Saved Predictions")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") {
+                            isModalPresented = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton() // Aggiunge il pulsante "Modifica" per abilitare lo swipe
+                    }
+                }
+            }
+        }
+    }
+
+    // Funzione per eliminare una predizione
+    private func deletePrediction(at offsets: IndexSet) {
+        savedPredictions.remove(atOffsets: offsets)
     }
 }
 

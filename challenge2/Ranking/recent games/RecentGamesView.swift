@@ -48,11 +48,11 @@ struct RecentGamesView: View {
                                             
                                             Text(game.description)
                                                 .font(.subheadline)
-                                                .foregroundColor(.gray)
+                                                .foregroundColor(.black)
                                             
                                             Text("Played on \(formattedDate(game.date))")
                                                 .font(.footnote)
-                                                .foregroundColor(.gray)
+                                                .foregroundColor(.black)
                                         }
                                         
                                         Spacer()
@@ -72,6 +72,7 @@ struct RecentGamesView: View {
                                     .background(Color.white.opacity(1))
                                     .cornerRadius(15)
                                     .shadow(radius: 0)
+
                                 }
                             }
                             .onDelete(perform: deleteGame) // Aggiunto .onDelete

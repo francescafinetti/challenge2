@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		F96F2CBF2CD8CC43002759C5 /* LudiKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LudiKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9DCD9A12CEC891B0029D7E0 /* LudiKit-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "LudiKit-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +33,7 @@
 		F96F2CB62CD8CC43002759C5 = {
 			isa = PBXGroup;
 			children = (
+				F9DCD9A12CEC891B0029D7E0 /* LudiKit-Info.plist */,
 				F96F2CC12CD8CC43002759C5 /* challenge2 */,
 				F96F2CC02CD8CC43002759C5 /* Products */,
 			);
@@ -255,6 +257,8 @@
 				DEVELOPMENT_TEAM = E73CXZ7E4M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "LudiKit-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Abbiamo bisogno della fotocamera per classificare le immagini.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -265,7 +269,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.academy.developer.fran.challenge2;
+				PRODUCT_BUNDLE_IDENTIFIER = org.academy.developer.fran;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -284,6 +288,8 @@
 				DEVELOPMENT_TEAM = E73CXZ7E4M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "LudiKit-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Abbiamo bisogno della fotocamera per classificare le immagini.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -294,7 +300,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.academy.developer.fran.challenge2;
+				PRODUCT_BUNDLE_IDENTIFIER = org.academy.developer.fran;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

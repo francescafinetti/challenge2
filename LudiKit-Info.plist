@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>import SwiftUI
+import CoreML
+import Vision
+
+struct CameraView: View {
+    @State private var capturedImage: UIImage? // Per l'immagine acquisita
+    @State private var prediction: String = "Nessuna predizione ancora"
+    @State private var isCameraPresented: Bool = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Classificatore con Fotocamera")
+                .font(.title)
+                .padding()
+
+            // Mostra l'immagine acquisita
+            if let capturedImage = capturedImage {
+                Image(uiImage: capturedImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 300)
+            } else {
+                Text("Scatta una foto")
+                    .foregroundColor(.gray)
+                    .frame(width: 300, height: 300)
+                    .background(Color.secondary.opacity(0.2))
+                    .cornerRadius(10)
+            }
+
+            // Pulsante per aprire la fotocamera
+            Button(action: {
+                isCameraPresented = true
+            }) {
+                Text("Apri Fotocamera")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            // Mostra il risultato della classificazione
+            Text("Predizione: \(prediction)")
+                .font(.headline)
+                .padding()
+
+        }
+        .padding()
+        .sheet(isPresented: $isCameraPresented) {
+            CameraCaptureView(image: $capturedImage, onComplete: classifyCapturedImage)
+        }
+    }
+
+    // Funzione per classificare l'immagine acquisita
+    func classifyCapturedImage() {
+        guard let capturedImage = capturedImage,
+              let ciImage = CIImage(image: capturedImage) else {
+            prediction = "Errore: immagine non valida"
+            return
+        }
+
+        do {
+            let model = try VNCoreMLModel(for: prova(configuration: MLModelConfiguration()).model)
+            let request = VNCoreMLRequest(model: model) { request, error in
+                if let results = request.results as? [VNClassificationObservation],
+                   let topResult = results.first {
+                    prediction = "\(topResult.identifier) con confidenza \(Int(topResult.confidence * 100))%"
+                } else {
+                    prediction = "Errore durante la classificazione"
+                }
+            }
+
+            let handler = VNImageRequestHandler(ciImage: ciImage)
+            try handler.perform([request])
+        } catch {
+            prediction = "Errore: \(error.localizedDescription)"
+        }
+    }
+}
+
+// CameraCaptureView per acquisire una foto dalla fotocamera
+struct CameraCaptureView: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    var onComplete: () -&gt; Void
+
+    func makeUIViewController(context: Context) -&gt; UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.sourceType = .camera
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -&gt; Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraCaptureView
+
+        init(_ parent: CameraCaptureView) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let selectedImage = info[.originalImage] as? UIImage {
+                parent.image = selectedImage
+                parent.onComplete()
+            }
+            picker.dismiss(animated: true)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
+        }
+    }
+}
+import SwiftUI
+import CoreML
+import Vision
+
+struct CameraView: View {
+    @State private var capturedImage: UIImage? // Per l'immagine acquisita
+    @State private var prediction: String = "Nessuna predizione ancora"
+    @State private var isCameraPresented: Bool = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Classificatore con Fotocamera")
+                .font(.title)
+                .padding()
+
+            // Mostra l'immagine acquisita
+            if let capturedImage = capturedImage {
+                Image(uiImage: capturedImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 300)
+            } else {
+                Text("Scatta una foto")
+                    .foregroundColor(.gray)
+                    .frame(width: 300, height: 300)
+                    .background(Color.secondary.opacity(0.2))
+                    .cornerRadius(10)
+            }
+
+            // Pulsante per aprire la fotocamera
+            Button(action: {
+                isCameraPresented = true
+            }) {
+                Text("Apri Fotocamera")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            // Mostra il risultato della classificazione
+            Text("Predizione: \(prediction)")
+                .font(.headline)
+                .padding()
+
+        }
+        .padding()
+        .sheet(isPresented: $isCameraPresented) {
+            CameraCaptureView(image: $capturedImage, onComplete: classifyCapturedImage)
+        }
+    }
+
+    // Funzione per classificare l'immagine acquisita
+    func classifyCapturedImage() {
+        guard let capturedImage = capturedImage,
+              let ciImage = CIImage(image: capturedImage) else {
+            prediction = "Errore: immagine non valida"
+            return
+        }
+
+        do {
+            let model = try VNCoreMLModel(for: prova(configuration: MLModelConfiguration()).model)
+            let request = VNCoreMLRequest(model: model) { request, error in
+                if let results = request.results as? [VNClassificationObservation],
+                   let topResult = results.first {
+                    prediction = "\(topResult.identifier) con confidenza \(Int(topResult.confidence * 100))%"
+                } else {
+                    prediction = "Errore durante la classificazione"
+                }
+            }
+
+            let handler = VNImageRequestHandler(ciImage: ciImage)
+            try handler.perform([request])
+        } catch {
+            prediction = "Errore: \(error.localizedDescription)"
+        }
+    }
+}
+
+// CameraCaptureView per acquisire una foto dalla fotocamera
+struct CameraCaptureView: UIViewControllerRepresentable {
+    @Binding var image: UIImage?
+    var onComplete: () -&gt; Void
+
+    func makeUIViewController(context: Context) -&gt; UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.sourceType = .camera
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -&gt; Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraCaptureView
+
+        init(_ parent: CameraCaptureView) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            if let selectedImage = info[.originalImage] as? UIImage {
+                parent.image = selectedImage
+                parent.onComplete()
+            }
+            picker.dismiss(animated: true)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
+        }
+    }
+}
+</key>
+	<string></string>
+</dict>
+</plist>
