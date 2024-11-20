@@ -14,7 +14,7 @@ struct TimerView: View {
     let maxTime: CGFloat = 40000000.0
     
     var body: some View {
-        NavigationStack{
+        NavigationView{
             ZStack {
                 LinearGradient(
                     gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),

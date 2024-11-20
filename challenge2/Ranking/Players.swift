@@ -7,6 +7,7 @@ struct Player: Identifiable {
     var testo: String
     var playerpoints: Int
     var playerBadge: String
+    var additionalPoints: Int? = nil // Punti da aggiungere
 }
 
 struct playerEntry: View {

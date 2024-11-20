@@ -16,7 +16,7 @@ struct RandomTokenView: View {
     let colors: [Color] = [.red, .green, .blue, .yellow, .purple, .orange, .pink, .teal, .black, .gray]
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 LinearGradient(
                     gradient: Gradient(colors: [.white, .accentColor.opacity(0.2)]),

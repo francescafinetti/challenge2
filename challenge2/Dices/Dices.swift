@@ -11,7 +11,7 @@ struct Dices: View {
     @State private var savedPredictions: [String] = [] // Lista delle predizioni salvate
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack {
                 // Sfondo
                 LinearGradient(gradient: Gradient(colors: [Color.white.opacity(0.4), Color.accentColor.opacity(0.4)]), startPoint: .top, endPoint: .bottom)

@@ -7,10 +7,9 @@ struct ToolCard: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 5) { // Center align VStack
-            Image(systemName: iconName)
-                .font(.system(size: 100))
-                .foregroundColor(Color.accentColor)
-                .frame(maxWidth: .infinity, alignment: .center)
+            Image(iconName)
+                .resizable()
+                .scaledToFit()
             
             Text(title)
                 .font(.headline)
@@ -30,4 +29,11 @@ struct ToolCard: View {
         .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
     }
 }
+
+#Preview {
+    ContentView()
+}
+
+//.resizable
+//.scaledtofit
 

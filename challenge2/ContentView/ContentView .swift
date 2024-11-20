@@ -23,17 +23,17 @@ struct ContentView: View {
 
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                             NavigationLink(destination: TimerView()) {
-                                ToolCard(iconName: "timer", title: "Timer", subtitle: "Set a Timer!")
+                                ToolCard(iconName: "hourglass", title: "Timer", subtitle: "Set a Timer!")
                             }
                             NavigationLink(destination: RandomTokenView()) {
-                                ToolCard(iconName: "bag.fill", title: "Random Token", subtitle: "random token bag filled picker")
+                                ToolCard(iconName: "blue_token", title: "Random Token", subtitle: "Create a bag of tokens and draw them!")
                             }
                             
                             NavigationLink(destination: Dices()) {
-                                ToolCard(iconName: "dice.fill", title: "Dice Roller", subtitle: "Roll one or multiple dices!")
+                                ToolCard(iconName: "dice", title: "Dice Roller", subtitle: "Roll one or multiple dices!")
                             }
                             NavigationLink(destination: Wheel()) {
-                                ToolCard(iconName: "line.3.crossed.swirl.circle", title: "Spin the Wheel", subtitle: "Lore Ipsum Text Generator")
+                                ToolCard(iconName: "wheel1", title: "Random Picker", subtitle: "Insert players and select randomly!")
                             }
                         }
                         .padding(.horizontal)

@@ -32,10 +32,28 @@ struct ResumeRankingView: View {
                             }
                         }
                         
-                        // Campo per i punti del giocatore
-                        TextField("Points", value: $players[index].playerpoints, format: .number)
-                            .keyboardType(.numberPad)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        // Campo per i punti del giocatore con incremento personalizzato
+                        HStack {
+                            TextField("Points", value: $players[index].playerpoints, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            
+                            TextField("Add", value: $players[index].additionalPoints, format: .number)
+                                .keyboardType(.numberPad)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 70) // Campo per punti da aggiungere
+                            
+                            Button(action: {
+                                if let additionalPoints = players[index].additionalPoints {
+                                    players[index].playerpoints += additionalPoints
+                                    players[index].additionalPoints = 0 // Resetta il valore aggiuntivo
+                                }
+                            }) {
+                                Image(systemName: "plus.circle")
+                                    .foregroundColor(.blue)
+                                    .font(.title2)
+                            }
+                        }
                         
                         // Pulsante per selezionare un'immagine
                         Button(action: {
